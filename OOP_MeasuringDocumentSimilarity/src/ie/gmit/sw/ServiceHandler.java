@@ -3,6 +3,9 @@ package ie.gmit.sw;
 import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
+
+import com.sun.jdi.Method;
+
 import javax.servlet.annotation.*;
 
 /* NB: You will need to add the JAR file $TOMCAT_HOME/lib/servlet-api.jar to your CLASSPATH 
@@ -12,6 +15,7 @@ import javax.servlet.annotation.*;
 @MultipartConfig(fileSizeThreshold=1024*1024*2, // 2MB. The file size in bytes after which the file will be temporarily stored on disk. The default size is 0 bytes.
                  maxFileSize=1024*1024*10,      // 10MB. The maximum size allowed for uploaded files, in bytes
                  maxRequestSize=1024*1024*50)   // 50MB. he maximum size allowed for a multipart/form-data request, in bytes.
+
 public class ServiceHandler extends HttpServlet {
 	/* Declare any shared objects here. For example any of the following can be handled from 
 	 * this context by instantiating them at a servlet level:
@@ -132,10 +136,45 @@ public class ServiceHandler extends HttpServlet {
 			//Break each line up into shingles and do something. The servlet really should act as a
 			//contoller and dispatch this task to something else... Divide and conquer...! I've been
 			//telling you all this since 2nd year...!
+			
+			
+//			//Use a regex that removes everything except A-Z
+//			String[] words = line.split(" ");
+//			
+//			
+//
+//			
+//			for(int i= 0; i < SHINGLE_SIZE; i++){
+//				append(words[i]);
+//			}
+//			
+//			Shingle s = getNextShingle();
+//			
+//			put is a blocking Method.class Add is NOT!
+//			bq.put(s)			
+			
+			
+			
+			
+			
+			
 			out.print(line);
 		}
 		out.print("</font>");	
 	}
+	
+	
+//	private Shingle getNextShingle() {
+//		int count = 0;
+//		StringBuilder sb ...
+//		
+//		while (counter < SHINGLE_SIZE) {
+//			if(buffer.peek() != null) sb.append(buffer.poll());
+//			counter++
+//		return new Shingle(docId, sb.ToString.toUpperCase().hashCode());
+//		}
+//	}
+	
 
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		doGet(req, resp);

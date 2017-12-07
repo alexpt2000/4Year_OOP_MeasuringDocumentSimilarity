@@ -1,0 +1,145 @@
+Random 
+Just 200 numbers
+
+
+
+// *****************************************************************************************************
+// Set Database
+// SOME_GLOBAL_OR_ENVIRONMENTAL_VARIABLE
+
+//  <context-param>
+//    <param-name>DB_PATH</param-name>
+//    <param-value>/~web/db/secure/db.yap</param-value>
+//  </context-param>
+
+
+// *****************************************************************************************************
+
+//  <context-param>
+//    <param-name>SHINGLE_SIZE</param-name>
+//    <param-value>3</param-value>
+//  </context-param>
+
+
+// *****************************************************************************************************
+//  <context-param>
+//    <param-name>MINHASH_NUMBER</param-name>
+//    <param-value>200</param-value>
+//  </context-param>
+
+// *****************************************************************************************************
+
+class Document{
+	private int[] shingles;
+	private int docId; // Start 0
+
+}
+
+// *****************************************************************************************************
+// 3.3.1 Matrix Representation of Sets   Pg - 81
+// https://learnonline.gmit.ie/pluginfile.php/253174/mod_resource/content/1/ch3.pdf
+
+
+
+// *****************************************************************************************************
+
+BlockingQueue<Shingle> bq = new BlokingQueue<>();
+
+_________________________
+|  |  |   |   |   |   |
+_________________________
+
+// *****************************************************************************************************
+
+Public class Shingle{
+	private int hasCode;
+	private int docId;
+
+}	
+
+
+// *****************************************************************************************************
+
+public class Consumer implements Runnable{
+	private BlokingQueue<Shingle> queue;
+	private ExecutorService poll;
+	private int[] minhashe = new int [MINHAHE-MUNBER];
+	
+	public Consumer (BlockingQuue <Shingle> queue){
+		this.queue; init();
+	
+	}
+
+}
+
+
+// *****************************************************************************************************
+private void init(){
+
+	for(i = 0; i < minhashe.length; i++)
+	minhashes[i] = Random.next
+
+	pool = Executors.newFixedSizedThreaPool(50);
+
+}
+
+// *****************************************************************************************************
+
+DocId			Has
+0				22223, 2222333
+
+MAP<Integer, List<Integer>>
+
+// *****************************************************************************************************
+
+
+Public void run(){
+
+	Map<Integer, List<Interger>> map = new ConcurrentHashMap()<>;
+	
+	List<Interger> list = new ArrayList<>(minhashes.length)
+	
+	for(int i = 0; i < list.lenght; i++){
+		list.set(i, Interger.MAX_VALUE);
+	
+	}
+	
+	map.put(docId, )
+
+pool.execute(new Runnable(){
+	publlic void run(){
+
+		for(int i = 0; i < Minhashe.lenght; i++){
+			int value = next.getHashecode() ^ minhashes[i]; // XOR the value with min Hash
+		
+			List<Interger> hashes = map.get(next.getDocId());
+			
+			if(value < hashes.get(i)){
+				hash.set(i, value);
+			}
+		}
+	}
+});
+
+	Shingle next = queue.take();
+	
+	pool.execute(new Runnable()){
+	
+	
+	}
+
+	for(int i=0; MinHashes[i]; )
+	
+	pool.awaitTermination(Long.MAX_VALUE, )
+
+}
+
+
+
+
+
+
+
+
+
+		
