@@ -47,9 +47,7 @@ public class Google {
 
 	static Map<String, List<Long>> getSignatures(Map<String, List<Integer>> shingledDocuments) {
 		Map<String, List<Long>> signatures = new HashMap<>();
-		shingledDocuments.forEach((document, shingles) -> {
-			signatures.put(document, asSignature(shingles));
-		});
+		shingledDocuments.forEach((document, shingles) -> {signatures.put(document, asSignature(shingles));});
 		return signatures;
 	}
 
@@ -105,7 +103,6 @@ public class Google {
 	static <T> double jaccardSimilarity(Set<T> a, Set<T> b) {
 		// | A n B | / ( |A| + |B| - | A n B|)
 		double intersectionSize = Sets.intersection(a, b).size();
-
 		return intersectionSize / (a.size() + b.size() - intersectionSize);
 	}
 
@@ -139,7 +136,7 @@ public class Google {
 
 	public static void main(final String[] args) throws IOException {
 		//final String datafile = args[0];
-		final String datafile = "WarAndPeace-LeoTolstoy.txt";
+		final String datafile = "C:/books/PoblachtNaHEireann.txt";
 		final double minimumSimilarity = 0.80;
 		assert maxShingleId == Integer.MAX_VALUE;
 		assert maxShingleId < nextPrime;
@@ -147,18 +144,18 @@ public class Google {
 		try (Stream<String> dataFileStream = Files.lines(Paths.get(datafile))) {
 			Map<String, List<Integer>> documentHashedShingles = computeShingles(dataFileStream);
 			Map<String, List<Long>> signatures = getSignatures(documentHashedShingles);
-			Map<String, Map<String, Double>> estimatedSimilarity = compareAllSignatures(signatures);
+			//Map<String, Map<String, Double>> estimatedSimilarity = compareAllSignatures(signatures);
 
 			System.out.println("==== Matched Document ====");
 
-			estimatedSimilarity.forEach((document, relatedDocumentMap) -> {
-				relatedDocumentMap.forEach((doc2, estJs) -> {
-					if (document == doc2)
-						return;
-					if (estJs > minimumSimilarity)
-						System.out.println(document + " -> " + doc2 + " = " + estJs);
-				});
-			});
+//			estimatedSimilarity.forEach((document, relatedDocumentMap) -> {
+//				relatedDocumentMap.forEach((doc2, estJs) -> {
+//					if (document == doc2)
+//						return;
+//					if (estJs > minimumSimilarity)
+//						System.out.println(document + " -> " + doc2 + " = " + estJs);
+//				});
+//			});
 		}
 		return;
 	}

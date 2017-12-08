@@ -4,8 +4,17 @@ import info.debatty.java.lsh.LSHMinHash;
 import info.debatty.java.lsh.MinHash;
 import java.util.Random;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class LSHMinHashExample.
+ */
 public class LSHMinHashExample {
 
+    /**
+     * The main method.
+     *
+     * @param args the arguments
+     */
     public static void main(String[] args) {
         // Number of sets
         int count = 2000;

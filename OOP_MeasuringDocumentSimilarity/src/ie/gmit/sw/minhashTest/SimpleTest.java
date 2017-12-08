@@ -11,7 +11,7 @@ class MinHashTester {
 		long[][] minHashValues = new long[2][numHash];
 		Arrays.fill(minHashValues[0], Long.MAX_VALUE);
 		Arrays.fill(minHashValues[1], Long.MAX_VALUE);
-		Random r = new Random(63689);
+		Random r = new Random(200);
 		int similarity = 0;
 		for (int i = 0; i < numHash; i++) {
 			int a = r.nextInt() + 1;

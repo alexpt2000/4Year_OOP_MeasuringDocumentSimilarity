@@ -2,6 +2,7 @@ package ie.gmit.sw.minhashTest;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 
+
 /**
 * A simple MinHash implementation inspired by https://github.com/jmhodges/minhash
 *
@@ -9,8 +10,15 @@ import com.google.common.hash.Hashing;
 */
 public class MinHash1 {
 
+    /** The hash. */
     private HashFunction hash = Hashing.murmur3_32();
 
+    /**
+     * Hash.
+     *
+     * @param string the string
+     * @return the string
+     */
     public String hash(String string) {
         int min = Integer.MAX_VALUE;
         for (int i=0; i<string.length(); i++) {
@@ -23,6 +31,11 @@ public class MinHash1 {
         return Integer.toHexString(min);
     }
 
+    /**
+     * The main method.
+     *
+     * @param args the arguments
+     */
     public static void main(String... args) {
         
     	MinHash1 minHash = new MinHash1();
