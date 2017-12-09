@@ -30,6 +30,11 @@ public class NearDuplicates {
 		MinHash mh = new MinHash("./books", 4); //arg 0 and 1 <folder> <num permutations>
 		int[][] hashMtx = mh.minHashMatrix();
 		String[] docNames = mh.allDocs();
+		
+		for (int i = 0; i < docNames.length; i++) {
+			System.out.println(docNames[i]);
+		}
+		
 		LSH lsh = new LSH(hashMtx, docNames, 3); // arg 2 <num bands>
 		List<String> nearDuplicates = lsh.nearDuplicatesOf("PoblachtNaHEireann.txt"); //arg 4 <doc name>
 		

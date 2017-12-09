@@ -51,6 +51,8 @@ public class MinHash {
 	 * @return String array of document names.
 	 */
 	public String[] allDocs() {
+		
+		
 		return(folder.list());
 	}
 	
