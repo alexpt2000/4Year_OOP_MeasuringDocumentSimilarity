@@ -1,6 +1,3 @@
-package ie.gmit.sw.db4o;
-
-
 import com.db4o.*;
 import com.db4o.config.*;
 import com.db4o.query.*;
@@ -12,12 +9,12 @@ import java.util.*;
 
 import static java.lang.System.*;
 
-public class OrderRunner {
+public class booksDB {
 	private ObjectContainer db = null;
-	private List<Customer> customers = new ArrayList<Customer>();
+	private List<Books> book = new ArrayList<Books>();
 	
-	public OrderRunner() {
-		init(); //Populate the customers collection
+	public booksDB() {
+		init(); //Populate the book collection
 		
 		EmbeddedConfiguration config = Db4oEmbedded.newConfiguration();
 		config.common().add(new TransparentActivationSupport()); //Real lazy. Saves all the config commented out below
@@ -39,14 +36,14 @@ public class OrderRunner {
 		*/
 
 		//Open a local database. Use Db4o.openServer(config, server, port) for full client / server
-		db = Db4oEmbedded.openFile(config, "customers.data");
+		db = Db4oEmbedded.openFile(config, "book.data");
 		
 		
-		addCustomersToDatabase();
-		showAllCustomers();
-		getCustomerQBE(customers.get(0));
-		getCustomerNative(customers.get(0));
-		getCustomerSODA(customers.get(0));
+		addBookssToDatabase();
+		showAllBooks();
+		getBooksQBE(book.get(0));
+		getBooksNative(book.get(0));
+		getBooksSODA(book.get(0));
 		addLineitem("1", new Lineitem("QB-122", "Stoat Natural Whole Tail", 3, 4.50d));
 	}
 	
@@ -54,8 +51,8 @@ public class OrderRunner {
 	 * in a transactional environment. Adding objects to our database
 	 * merely requires calling db.set(object). 
 	 */
-	private void addCustomersToDatabase(){
-		for (Customer c: customers){
+	private void addBookssToDatabase(){
+		for (Books c: book){
 			db.store(c); //Adds the customer object to the database
 		}
 		db.commit(); //Commits the transaction
@@ -63,14 +60,14 @@ public class OrderRunner {
 	}
 	
 	/* This method illustrates a simple Query By Example (QBE). Note the
-	 * use of Customer.class as a parameter to the database query. This
-	 * basically returns all Customer objects in the database.
+	 * use of Books.class as a parameter to the database query. This
+	 * basically returns all Books objects in the database.
 	 */
-	private void showAllCustomers(){
+	private void showAllBooks(){
 		//An ObjectSet is a specialised List for storing results
-		ObjectSet<Customer> customers = db.query(Customer.class);
-		for (Customer customer : customers) {
-			out.println("[Customer] " + customer.getCustomerName() + "\t ***Database ObjID: " + db.ext().getID(customer));
+		ObjectSet<Books> books = db.query(Books.class);
+		for (Books book : books) {
+			out.println("[Books] " + book.getBookName()+ "\t ***Database ObjID: " + db.ext().getID(book));
 
 			//Removing objects from the database is as easy as adding them
 			//db.delete(customer);
@@ -89,13 +86,13 @@ public class OrderRunner {
 	 * filtering in a query. For this reason (and some others), native 
 	 * queries are preferred.  
 	 */
-	private void getCustomerQBE(Customer c){
-		//The new Customer(...) is a prototypical instance of the object(s) we want
-		ObjectSet<Customer> customer = db.queryByExample(new Customer(c.getCustomerNumber(), c.getCustomerName(), c.getAddress()));
-		if (customer.hasNext()) {
-			out.println("[getCustomerQBE] found " + c.getCustomerName());
+	private void getBooksQBE(Books b){
+		//The new Books(...) is a prototypical instance of the object(s) we want
+		ObjectSet<Books> book = db.queryByExample(new Books(b.getBookName(), b.getBookHash()));
+		if (book.hasNext()) {
+			out.println("[getBooksQBE] found " + b.getBookName());
 		} else {
-			out.println("[Error] " + c.getCustomerNumber() + " is not in the database");
+			out.println("[Error] " + b.getBookName() + " is not in the database");
 		}
 	}
 	
@@ -111,31 +108,31 @@ public class OrderRunner {
 	 */
 	
 	// ******************  Best ************************
-	private void getCustomerNative(final Customer c){
-		ObjectSet<Customer> result = db.query(new Predicate<Customer>() {
+	private void getBooksNative(final Books b){
+		ObjectSet<Books> result = db.query(new Predicate<Books>() {
 			private static final long serialVersionUID = 777L;
 
-			public boolean match(Customer customer) {
-		        return customer.getCustomerNumber().equals(c.getCustomerNumber());
+			public boolean match(Books book) {
+		        return book.getBookName().equals(b.getBookName());
 		    }	
 		});
 		
 		if (result.hasNext()) {
-			out.println("[getCustomerNative] found " + c.getCustomerName());
+			out.println("[getBooksNative] found " + b.getBookName());
 		} else {
-			out.println("[Error] " + c.getCustomerNumber() + " is not in the database");
+			out.println("[Error] " + b.getBookName() + " is not in the database");
 		}
 	}
 
-	private void getCustomerSODA(Customer c){
+	private void getBooksSODA(Books c){
 		Query query = db.query();
-		query.constrain(Customer.class);
-		query.descend("customerNumber").constrain(c.getCustomerNumber());
-		ObjectSet<Customer> result = query.execute();
+		query.constrain(Books.class);
+		query.descend("customerNumber").constrain(c.getBooksNumber());
+		ObjectSet<Books> result = query.execute();
 		if (result.hasNext()) {
-			out.println("[getCustomerSODA] found " + c.getCustomerName());
+			out.println("[getBooksSODA] found " + c.getBooksName());
 		} else {
-			out.println("[Error] " + c.getCustomerNumber() + " is not in the database");
+			out.println("[Error] " + c.getBooksNumber() + " is not in the database");
 		}
 	}
 
@@ -173,13 +170,13 @@ public class OrderRunner {
 		Address address2 = new Address("11 Main Street", "Belmullet", County.Mayo);
 		Address address3 = new Address("21 Main Street", "Waterford", County.Waterford);
 		
-		Customer c1 = new Customer("C1", "Sean Murphy", address1);
-		Customer c2 = new Customer("C2", "Michael McGrath", address2);
-		Customer c3 = new Customer("C3", "Mary Mannion", address3);
+		Books c1 = new Books("C1", "Sean Murphy", address1);
+		Books c2 = new Books("C2", "Michael McGrath", address2);
+		Books c3 = new Books("C3", "Mary Mannion", address3);
 		
-		customers.add(c1);
-		customers.add(c2);
-		customers.add(c3);
+		book.add(c1);
+		book.add(c2);
+		book.add(c3);
 		
 		Order order1 = new Order("1", new java.util.Date());
 		Order order2 = new Order("2", new java.util.Date());
@@ -229,6 +226,6 @@ public class OrderRunner {
 	}
 
 	public static void main(String[] args) {
-		new OrderRunner();
+		new booksDB();
 	}
 }
