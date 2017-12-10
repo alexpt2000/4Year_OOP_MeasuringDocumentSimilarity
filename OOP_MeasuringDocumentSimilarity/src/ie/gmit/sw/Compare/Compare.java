@@ -36,59 +36,91 @@ public class Compare {
 		}
 		return (double) similarity / numHash;
 	}
-	
-	
+
 	public double similarityHashMap(Map<Integer, List<Integer>> book1, Map<Integer, List<Integer>> bookDB) {
 
 		int sizeHanh = book1.size() + bookDB.size();
-		
+
 		long[][] minHashValues = new long[2][sizeHanh];
 		Arrays.fill(minHashValues[0], Long.MAX_VALUE);
 		Arrays.fill(minHashValues[1], Long.MAX_VALUE);
-		
+
 		Random r = new Random(200);
 		int similarity = 0;
 
-		Set<Integer> book1Key = book1.keySet();
-		Set<Integer> bookDBKey = bookDB.keySet();
-		
-		for (int i = 0; i < sizeHanh; i++) {
+		int count = 0;
+
+		for (Map.Entry<Integer, List<Integer>> me : book1.entrySet()) {
+			int key = me.getKey();
+			List<Integer> valueList = me.getValue();
 			int a = r.nextInt() + 1;
-			for(Integer key : book1Key)
-			{
-			   //System.out.println(((List)book1.get(key)).toString());
-				minHashValues[0][i] = Math.min(minHashValues[0][i], getHash(key, a, i));
-				//minHashValues[0][i] = key;
+
+			System.out.println("Key: " + key);
+			// System.out.print("Values: ");
+
+			for (int s : valueList) {
+				minHashValues[0][count] = Math.min(minHashValues[0][count], getHash(s, a, count));
+				// System.out.print(s + " ");
 			}
-			
-			for(Integer key : bookDBKey)
-			{
-				minHashValues[1][i] = Math.min(minHashValues[1][i], getHash(key, a, i));
-				//minHashValues[1][i] = key;
+
+			for (Map.Entry<Integer, List<Integer>> meDB : bookDB.entrySet()) {
+				int keyDB = meDB.getKey();
+				List<Integer> valueListDB = meDB.getValue();
+
+				// System.out.println("\nKey: " + keyDB);
+				// System.out.print("Values: ");
+
+				for (int s : valueList) {
+					minHashValues[1][count] = Math.min(minHashValues[1][count], getHash(s, a, count));
+					// System.out.print(s + " ");
+				}
+
+				if (minHashValues[0][count] == minHashValues[1][count]) {
+					System.out.println("Similar");
+					similarity++;
+				}
+
 			}
-			
-			if (minHashValues[0][i] == minHashValues[1][i]) {
-				similarity++;
-			}
-		}
+
+			System.out.println(count);
+			count++;
 		
-//		for (int i = 0; i < sizeHanh; i++) {
-//			int a = r.nextInt() + 1;
-//			for (String s : book1) {
-//				
-//				minHashValues[0][i] = Math.min(minHashValues[0][i], getHash(s.hashCode(), a, i));
-//			}
-//			for (String s : bookDB) {
-//				minHashValues[1][i] = Math.min(minHashValues[1][i], getHash(s.hashCode(), a, i));
-//			}
-//			
-//			if (minHashValues[0][i] == minHashValues[1][i]) {
-//				similarity++;
-//			}
-//		}
-		return (double) similarity / sizeHanh;
+		}
+
+		/*
+		 * Set<Integer> book1Key = book1.keySet(); Set<Integer> bookDBKey =
+		 * bookDB.keySet();
+		 * 
+		 * for (int i = 0; i < sizeHanh; i++) { int a = r.nextInt() + 1; for(Integer key
+		 * : book1Key) { //System.out.println(((List)book1.get(key)).toString());
+		 * minHashValues[0][i] = Math.min(minHashValues[0][i], getHash(key, a, i));
+		 * //minHashValues[0][i] = key; }
+		 * 
+		 * for(Integer key : bookDBKey) { minHashValues[1][i] =
+		 * Math.min(minHashValues[1][i], getHash(key, a, i)); //minHashValues[1][i] =
+		 * key; }
+		 * 
+		 * if (minHashValues[0][i] == minHashValues[1][i]) { similarity++; } }
+		 */
+
+		// for (int i = 0; i < sizeHanh; i++) {
+		// int a = r.nextInt() + 1;
+		// for (String s : book1) {
+		//
+		// minHashValues[0][i] = Math.min(minHashValues[0][i], getHash(s.hashCode(), a,
+		// i));
+		// }
+		// for (String s : bookDB) {
+		// minHashValues[1][i] = Math.min(minHashValues[1][i], getHash(s.hashCode(), a,
+		// i));
+		// }
+		//
+		// if (minHashValues[0][i] == minHashValues[1][i]) {
+		// similarity++;
+		// }
+		// }
+		return (double) similarity;
 	}
-	
 
 	// using circular shifts: http://en.wikipedia.org/wiki/Circular_shift
 	// http://stackoverflow.com/questions/5844084/java-circular-shift-using-bitwise-operations
@@ -105,34 +137,36 @@ public class Compare {
 	static Map<Integer, List<Integer>> computeShingles(Stream<String> dataFileStream) throws IOException {
 		Map<Integer, List<Integer>> docsAsShingleSets = new HashMap<>();
 		Random r = new Random();
-		//int[] populate = new int[200];
-		
-//		for (int i = 0; i < populate.length; i++) {
-//			populate[i] = r.nextInt(200);
-//			System.out.println(populate[i]);
-//		}
-		
-		 //int docId = 0;
+		// int[] populate = new int[200];
+
+		// for (int i = 0; i < populate.length; i++) {
+		// populate[i] = r.nextInt(200);
+		// System.out.println(populate[i]);
+		// }
+
+		// int docId = 0;
 
 		dataFileStream.forEach(line -> {
 			String[] words = line.split("\\s");
 			assert words.length > 2;
-			//final String docId = getDocumentName(words);
+			// final String docId = getDocumentName(words);
 			
+			if(words.length > 2) {
 			final String[] document = getDocument(words);
-			
+
 			int docId = r.nextInt(200);
 			docsAsShingleSets.put(docId, new ArrayList<>(asHashes(asShingles(document, 3))));
+			}
 		});
 
 		// Loop
-		//docsAsShingleSets.forEach((k, v) -> System.out.println(k + "=" + v));
-		
-//		docsAsShingleSets.entrySet().stream().forEach((entry) -> {
-//			Object currentKey = entry.getKey();
-//			Object currentValue = entry.getValue();
-//			System.out.println(currentKey + "=" + currentValue);
-//		});
+		// docsAsShingleSets.forEach((k, v) -> System.out.println(k + "=" + v));
+
+		// docsAsShingleSets.entrySet().stream().forEach((entry) -> {
+		// Object currentKey = entry.getKey();
+		// Object currentValue = entry.getValue();
+		// System.out.println(currentKey + "=" + currentValue);
+		// });
 
 		return docsAsShingleSets;
 	}
@@ -155,9 +189,9 @@ public class Compare {
 		}).collect(Collectors.toList());
 	}
 
-//	static String getDocumentName(String[] line) {
-//		return line[0];
-//	}
+	// static String getDocumentName(String[] line) {
+	// return line[0];
+	// }
 
 	static String[] getDocument(String[] line) {
 		return Arrays.copyOfRange(line, 1, line.length);

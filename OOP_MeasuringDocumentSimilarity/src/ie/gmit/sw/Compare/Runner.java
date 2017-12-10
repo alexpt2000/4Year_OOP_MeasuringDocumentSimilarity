@@ -17,7 +17,7 @@ public class Runner {
 		
 		
 		Compare compareDOC2 = new Compare();
-		final String datafileDOC2 = "C:/books/doc2.txt";
+		final String datafileDOC2 = "C:/books/doc1.txt";
 		Stream<String> dataFileStreamDOC2 = Files.lines(Paths.get(datafileDOC2));
 		Map<Integer, List<Integer>> documentHashedShinglesDOC2 = compareDOC2.computeShingles(dataFileStreamDOC2);
 	
@@ -25,7 +25,7 @@ public class Runner {
 		Compare compare = new Compare();
 		
 		//System.out.println(compare.similarityHashMap(documentHashedShinglesDOC1, documentHashedShinglesDOC2));
-		System.out.println(String.format("%.2f", (compare.similarityHashMap(documentHashedShinglesDOC1, documentHashedShinglesDOC2)) * 100) + " %");
+		System.out.println(String.format("%.2f", (compare.similarityHashMap(documentHashedShinglesDOC1, documentHashedShinglesDOC2))) + " %");
 		
 //		Set<String> text1 = new HashSet<String>();
 //		text1.add("Dora");
