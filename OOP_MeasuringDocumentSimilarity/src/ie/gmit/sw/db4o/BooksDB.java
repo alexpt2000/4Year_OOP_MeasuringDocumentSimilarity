@@ -13,13 +13,9 @@ import static java.lang.System.*;
 
 public class BooksDB {
 	private ObjectContainer db = null;
-	private List<Books> book = new ArrayList<Books>();
+	// private List<Books> book = new ArrayList<Books>();
 
 	public BooksDB() {
-		// init(); //Populate the book collection
-		
-		//this.book = b;
-
 		EmbeddedConfiguration config = Db4oEmbedded.newConfiguration();
 		config.common().add(new TransparentActivationSupport()); // Real lazy. Saves all the config commented out below
 		config.common().add(new TransparentPersistenceSupport()); // Lazier still. Saves all the config commented out
@@ -34,10 +30,6 @@ public class BooksDB {
 		// client / server
 		db = Db4oEmbedded.openFile(config, "books.data");
 
-		//addBookssToDatabase();
-		//showAllBooks();
-		//getBooksNative(book.get(0));
-
 	}
 
 	/*
@@ -45,15 +37,12 @@ public class BooksDB {
 	 * environment. Adding objects to our database merely requires calling
 	 * db.set(object).
 	 */
-	public void addBookssToDatabase(List<Books> book) {
-//		for (Books b : book) {
-//			db.store(b); // Adds the customer object to the database
-//		}
-		
+	public void addBookssToDatabase(Books book) {
 		db.store(book);
-		
 		db.commit(); // Commits the transaction
 		// db.rollback(); //Rolls back the transaction
+
+		// System.out.println("Doc saved .: " + book.getBookName());
 	}
 
 	public void showAllBooks() {
@@ -66,6 +55,13 @@ public class BooksDB {
 			// db.delete(customer);
 			db.commit();
 		}
+	}
+
+	public List<Books> loadAllBooks() {
+		// An ObjectSet is a specialised List for storing results
+		ObjectSet<Books> books = db.query(Books.class);
+
+		return books;
 	}
 
 	// ****************** Best ************************
@@ -82,26 +78,21 @@ public class BooksDB {
 			out.println("[getBooksNative] found " + b.getBookName());
 
 			for (Books books : result) {
-				
+
 				for (Map.Entry<Integer, List<Integer>> me : books.getBookHash().entrySet()) {
 					int key = me.getKey();
 					List<Integer> valueList = me.getValue();
-					
-					System.out.println("Key: " + key + " = " );
-					
+
+					System.out.println("Key: " + key + " = ");
+
 					for (Integer s : valueList) {
 						System.out.print(" " + s);
 					}
-					
-					
 				}
-	
-				//System.out.println("Value .: " + books.getBookHash().entrySet());
+				// System.out.println("Value .: " + books.getBookHash().entrySet());
 			}
-	
 		} else {
 			out.println("[Error] " + b.getBookName() + " is not in the database");
 		}
 	}
-
 }

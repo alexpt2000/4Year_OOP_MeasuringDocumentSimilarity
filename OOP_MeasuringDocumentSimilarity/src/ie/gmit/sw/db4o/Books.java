@@ -5,18 +5,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-
-
 public class Books {
 
 	private String bookName;
 	Map<Integer, List<Integer>> bookHash = new HashMap<>();
 
-	
 	public Books() {
 		super();
 	}
-	
+
 	public Books(String bookName2) {
 		super();
 	}
@@ -42,7 +39,5 @@ public class Books {
 	public void setBookHash(Map<Integer, List<Integer>> bookHash) {
 		this.bookHash = bookHash;
 	}
-	
-
 
 }

@@ -1,4 +1,4 @@
-package ie.gmit.sw.Compare;
+package ie.gmit.sw.Lixo;
 
 import java.io.IOException;
 import java.nio.file.Files;

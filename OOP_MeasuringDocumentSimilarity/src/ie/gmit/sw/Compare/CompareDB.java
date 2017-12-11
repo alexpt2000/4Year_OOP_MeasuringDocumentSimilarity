@@ -22,69 +22,69 @@ import ie.gmit.sw.db4o.BooksDB;
 
 public class CompareDB {
 
-	public double similarityHashMap(List<Books> book1, List<Books> bookDB) {
+	public double similarityHashMap(Books book1, Books bookDB) {
 		int similarity = 0;
 
 		int similaritySize = 0;
 		int CountsimilaritySize = 0;
 
-		for (Books b1 : book1) {
+		// System.out.println(" Booke name" + book1.getBookName());
 
-			System.out.println(b1.getBookName());
+		for (Map.Entry<Integer, List<Integer>> me : book1.getBookHash().entrySet()) {
+			int key = me.getKey();
+			List<Integer> valueList = me.getValue();
 
-			for (Map.Entry<Integer, List<Integer>> me : b1.getBookHash().entrySet()) {
-				int key = me.getKey();
-				List<Integer> valueList = me.getValue();
+			// System.out.println("Key: " + key);
+			// System.out.println(b2.getBookName());
 
-				// System.out.println("Key: " + key);
+			for (Map.Entry<Integer, List<Integer>> meDB : bookDB.getBookHash().entrySet()) {
+				int keyDB = meDB.getKey();
 
-				for (Books b2 : bookDB) {
+				List<Integer> valueListDB = meDB.getValue();
 
-					// System.out.println(b2.getBookName());
+				int numHashSize = valueList.size() + valueListDB.size();
 
-					for (Map.Entry<Integer, List<Integer>> meDB : b2.getBookHash().entrySet()) {
-						int keyDB = meDB.getKey();
+				if (numHashSize == 0) {
+					numHashSize = 1;
+				}
 
-						List<Integer> valueListDB = meDB.getValue();
+				long[][] minHashValues = new long[2][numHashSize];
+				Arrays.fill(minHashValues[0], Long.MAX_VALUE);
+				Arrays.fill(minHashValues[1], Long.MAX_VALUE);
 
-						int numHashSize = valueList.size() + valueListDB.size();
+				Random r = new Random(200);
 
-						if (numHashSize == 0) {
-							numHashSize = 1;
-						}
+				for (int i = 0; i < numHashSize; i++) {
+					int a = r.nextInt() + 1;
 
-						long[][] minHashValues = new long[2][numHashSize];
-						Arrays.fill(minHashValues[0], Long.MAX_VALUE);
-						Arrays.fill(minHashValues[1], Long.MAX_VALUE);
+					for (Integer s : valueList) {
+						minHashValues[0][i] = Math.min(minHashValues[0][i], getHash(s, a, i));
+					}
 
-						Random r = new Random(200);
+					for (Integer s : valueListDB) {
+						minHashValues[1][i] = Math.min(minHashValues[1][i], getHash(s, a, i));
+					}
 
-						for (int i = 0; i < numHashSize; i++) {
-							int a = r.nextInt() + 1;
+					if (minHashValues[0][i] == minHashValues[1][i]) {
 
-							for (Integer s : valueList) {
-								minHashValues[0][i] = Math.min(minHashValues[0][i], getHash(s, a, i));
-							}
-
-							for (Integer s : valueListDB) {
-								minHashValues[1][i] = Math.min(minHashValues[1][i], getHash(s, a, i));
-							}
-
-							if (minHashValues[0][i] == minHashValues[1][i]) {
-
-								similarity++;
-							}
-						}
-						
-						CountsimilaritySize++;
-						similaritySize += numHashSize;
+						similarity++;
 					}
 				}
 
+				CountsimilaritySize++;
+				similaritySize += numHashSize;
 			}
+
 		}
-		return (double) similarity / (similaritySize / CountsimilaritySize);
-		//return (double) similaritySize;
+
+		double totalSimilarity = similarity / (similaritySize / CountsimilaritySize);
+
+		if (totalSimilarity > 100) {
+			totalSimilarity = 100;
+		}
+
+		return totalSimilarity;
+
 	}
 
 	// using circular shifts: http://en.wikipedia.org/wiki/Circular_shift
@@ -99,16 +99,18 @@ public class CompareDB {
 		return rst ^ random;
 	}
 
-	static List<Books> computeShingles(String bookName, Stream<String> dataFileStream) throws IOException {
-		
-		
-		List<Books> books = new ArrayList<Books>();
+	static Books computeShingles(String bookName, Stream<String> dataFileStream) throws IOException {
 
 		Map<Integer, List<Integer>> docsAsShingleSets = new HashMap<>();
 		Random r = new Random();
 
 		dataFileStream.forEach(line -> {
 			String[] words = line.split("\\s");
+
+			for (int i = 0; i < words.length; i++) {
+				words[i] = words[i].toUpperCase();
+			}
+
 			assert words.length > 2;
 
 			if (words.length > 2) {
@@ -121,12 +123,7 @@ public class CompareDB {
 
 		Books book = new Books(bookName, docsAsShingleSets);
 
-		books.add(book);
-
-		//new BooksDB(books);
-		//bookDB.addBookssToDatabase(books);
-
-		return books;
+		return book;
 	}
 
 	static List<List<String>> asShingles(final String[] document, final int length) {

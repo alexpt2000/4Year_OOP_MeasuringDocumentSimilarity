@@ -12,34 +12,33 @@ import ie.gmit.sw.db4o.BooksDB;
 public class RunnerDB {
 
 	public static void main(String[] args) throws IOException {
-		//private List<Books> book = new ArrayList<Books>();
 		BooksDB saveBook = new BooksDB();
-		
-		CompareDB compareDOC1 = new CompareDB();
-		final String datafileDOC1 = "C:/books/WarAndPeaceLeoTolstoy.txt";
-		Stream<String> dataFileStreamDOC1 = Files.lines(Paths.get(datafileDOC1));
-		List<Books> documentHashedShinglesDOC1 = compareDOC1.computeShingles(datafileDOC1, dataFileStreamDOC1);
-				
-		CompareDB compareDOC2 = new CompareDB();
-		//final String datafileDOC2 = "C:/books/bible1.txt";
-		final String datafileDOC2 = "C:/books/WarAndPeaceLeoTolstoyModify.txt";
-		//final String datafileDOC2 = "C:/books/WarAndPeaceLeoTolstoy.txt";
-		Stream<String> dataFileStreamDOC2 = Files.lines(Paths.get(datafileDOC2));
-		List<Books> documentHashedShinglesDOC2 = compareDOC2.computeShingles(datafileDOC2, dataFileStreamDOC2);
-		
 		CompareDB compare = new CompareDB();
-		System.out.println(String.format("%.2f", (compare.similarityHashMap(documentHashedShinglesDOC1, documentHashedShinglesDOC2))) + " %");
 
+		List<Books> loadDocumentsDB = saveBook.loadAllBooks();
+
+		//final String docName = "Bible - King James";
+		final String docName = "War And Peace Leo Tolstoy";
+		//final String docName = "War And Peace Leo Tolstoy - Modify";
 		
+		final String datafileDOC = "C:/books/WarAndPeaceLeoTolstoy.txt";
+		//final String datafileDOC = "C:/books/WarAndPeaceLeoTolstoyModify.txt";
+		//final String datafileDOC = "C:/books/bible1.txt";
+
+		Stream<String> dataFileStreamDOC = Files.lines(Paths.get(datafileDOC));
+		Books documentHashedShinglesDOC = compare.computeShingles(docName, dataFileStreamDOC);
+
+		System.out.println(docName);
+		System.out.println("==============================================");
+
+		for (Books books : loadDocumentsDB) {
+
+			System.out.println(String.format("%.2f", (compare.similarityHashMap(documentHashedShinglesDOC, books)))
+					+ " %" + "\t\t" + books.getBookName());
+
+		}
 		
-		saveBook.addBookssToDatabase(documentHashedShinglesDOC1);
-		saveBook.showAllBooks();
-		
-		saveBook.addBookssToDatabase(documentHashedShinglesDOC2);
-		saveBook.showAllBooks();
-		saveBook.getBooksNative(documentHashedShinglesDOC2.get(0));
-		
-		//BooksDB saveBook2 = new BooksDB(documentHashedShinglesDOC2);
-		
+		//saveBook.addBookssToDatabase(documentHashedShinglesDOC);
+
 	}
 }
