@@ -1,4 +1,4 @@
-package ie.gmit.sw.minhash;
+package ie.gmit.sw.Lab1;
 
 import java.io.IOException;
 import java.util.List;

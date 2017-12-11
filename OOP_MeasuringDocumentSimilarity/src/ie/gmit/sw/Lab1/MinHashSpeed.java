@@ -1,3 +1,4 @@
+package ie.gmit.sw.Lab1;
 //package ie.gmit.sw.minhash;
 //
 //import java.io.IOException;

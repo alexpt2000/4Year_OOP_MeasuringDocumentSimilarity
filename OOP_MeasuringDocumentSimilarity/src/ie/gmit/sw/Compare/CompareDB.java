@@ -1,10 +1,12 @@
 package ie.gmit.sw.Compare;
 
+import java.awt.print.Book;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -15,77 +17,74 @@ import java.util.stream.Stream;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 
+import ie.gmit.sw.db4o.Books;
 import ie.gmit.sw.db4o.BooksDB;
 
-public class Compare {
+public class CompareDB {
 
-	
-	
-	public double similarity(Set<String> text1, Set<String> text2, int numHash) {
-
-		long[][] minHashValues = new long[2][numHash];
-		Arrays.fill(minHashValues[0], Long.MAX_VALUE);
-		Arrays.fill(minHashValues[1], Long.MAX_VALUE);
-		Random r = new Random(200);
-		int similarity = 0;
-		for (int i = 0; i < numHash; i++) {
-			int a = r.nextInt() + 1;
-			for (String s : text1)
-				minHashValues[0][i] = Math.min(minHashValues[0][i], getHash(s.hashCode(), a, i));
-			for (String s : text2)
-				minHashValues[1][i] = Math.min(minHashValues[1][i], getHash(s.hashCode(), a, i));
-			if (minHashValues[0][i] == minHashValues[1][i]) {
-				similarity++;
-			}
-		}
-		return (double) similarity / numHash;
-	}
-
-	public double similarityHashMap(Map<Integer, List<Integer>> book1, Map<Integer, List<Integer>> bookDB) {
+	public double similarityHashMap(List<Books> book1, List<Books> bookDB) {
 		int similarity = 0;
 
-		int count = 0;
+		int similaritySize = 0;
+		int CountsimilaritySize = 0;
 
-		for (Map.Entry<Integer, List<Integer>> me : book1.entrySet()) {
-			int key = me.getKey();
-			List<Integer> valueList = me.getValue();
+		for (Books b1 : book1) {
 
-			// System.out.println("Key: " + key);
+			System.out.println(b1.getBookName());
 
-			for (Map.Entry<Integer, List<Integer>> meDB : bookDB.entrySet()) {
-				int keyDB = meDB.getKey();
+			for (Map.Entry<Integer, List<Integer>> me : b1.getBookHash().entrySet()) {
+				int key = me.getKey();
+				List<Integer> valueList = me.getValue();
 
-				List<Integer> valueListDB = meDB.getValue();
+				// System.out.println("Key: " + key);
 
-				int numHashSize = valueList.size() + valueListDB.size();
+				for (Books b2 : bookDB) {
 
-				long[][] minHashValues = new long[2][numHashSize];
-				Arrays.fill(minHashValues[0], Long.MAX_VALUE);
-				Arrays.fill(minHashValues[1], Long.MAX_VALUE);
+					// System.out.println(b2.getBookName());
 
-				Random r = new Random(200);
+					for (Map.Entry<Integer, List<Integer>> meDB : b2.getBookHash().entrySet()) {
+						int keyDB = meDB.getKey();
 
-				for (int i = 0; i < numHashSize; i++) {
-					int a = r.nextInt() + 1;
+						List<Integer> valueListDB = meDB.getValue();
 
-					for (Integer s : valueList) {
-						minHashValues[0][i] = Math.min(minHashValues[0][i], getHash(s, a, i));
-					}
+						int numHashSize = valueList.size() + valueListDB.size();
 
-					for (Integer s : valueListDB) {
-						minHashValues[1][i] = Math.min(minHashValues[1][i], getHash(s, a, i));
-					}
+						if (numHashSize == 0) {
+							numHashSize = 1;
+						}
 
-					if (minHashValues[0][i] == minHashValues[1][i]) {
-						similarity++;
+						long[][] minHashValues = new long[2][numHashSize];
+						Arrays.fill(minHashValues[0], Long.MAX_VALUE);
+						Arrays.fill(minHashValues[1], Long.MAX_VALUE);
+
+						Random r = new Random(200);
+
+						for (int i = 0; i < numHashSize; i++) {
+							int a = r.nextInt() + 1;
+
+							for (Integer s : valueList) {
+								minHashValues[0][i] = Math.min(minHashValues[0][i], getHash(s, a, i));
+							}
+
+							for (Integer s : valueListDB) {
+								minHashValues[1][i] = Math.min(minHashValues[1][i], getHash(s, a, i));
+							}
+
+							if (minHashValues[0][i] == minHashValues[1][i]) {
+
+								similarity++;
+							}
+						}
+						
+						CountsimilaritySize++;
+						similaritySize += numHashSize;
 					}
 				}
-			}
 
-			// System.out.println(count);
-			count++;
+			}
 		}
-		return (double) similarity / count;
+		return (double) similarity / (similaritySize / CountsimilaritySize);
+		//return (double) similaritySize;
 	}
 
 	// using circular shifts: http://en.wikipedia.org/wiki/Circular_shift
@@ -100,8 +99,11 @@ public class Compare {
 		return rst ^ random;
 	}
 
-	static Map<Integer, List<Integer>> computeShingles(Stream<String> dataFileStream) throws IOException {
-		//BooksDB bookDB = new BooksDB();
+	static List<Books> computeShingles(String bookName, Stream<String> dataFileStream) throws IOException {
+		
+		
+		List<Books> books = new ArrayList<Books>();
+
 		Map<Integer, List<Integer>> docsAsShingleSets = new HashMap<>();
 		Random r = new Random();
 
@@ -117,9 +119,14 @@ public class Compare {
 			}
 		});
 
-		//bookDB.addBookssToDatabase(docsAsShingleSets);
-		
-		return docsAsShingleSets;
+		Books book = new Books(bookName, docsAsShingleSets);
+
+		books.add(book);
+
+		//new BooksDB(books);
+		//bookDB.addBookssToDatabase(books);
+
+		return books;
 	}
 
 	static List<List<String>> asShingles(final String[] document, final int length) {

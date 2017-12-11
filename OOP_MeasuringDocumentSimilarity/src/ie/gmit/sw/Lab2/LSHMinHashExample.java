@@ -1,4 +1,4 @@
-package ie.gmit.sw.minhashTest;
+package ie.gmit.sw.Lab2;
 
 import info.debatty.java.lsh.LSHMinHash;
 import info.debatty.java.lsh.MinHash;

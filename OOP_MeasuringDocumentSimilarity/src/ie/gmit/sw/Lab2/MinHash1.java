@@ -1,4 +1,4 @@
-package ie.gmit.sw.minhashTest;
+package ie.gmit.sw.Lab2;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 

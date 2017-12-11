@@ -1,4 +1,4 @@
-package ie.gmit.sw.minhash;
+package ie.gmit.sw.Lab1;
 
 import java.io.BufferedReader;
 import java.io.File;
