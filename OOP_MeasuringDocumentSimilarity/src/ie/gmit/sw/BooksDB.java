@@ -1,9 +1,10 @@
-package ie.gmit.sw.db4o;
+package ie.gmit.sw;
 
 import com.db4o.*;
 import com.db4o.config.*;
 import com.db4o.query.*;
 import com.db4o.ta.*;
+
 import xtea_db4o.XTEA;
 import xtea_db4o.XTeaEncryptionStorage;
 
@@ -28,7 +29,7 @@ public class BooksDB {
 
 		// Open a local database. Use Db4o.openServer(config, server, port) for full
 		// client / server
-		db = Db4oEmbedded.openFile(config, "books.data");
+		db = Db4oEmbedded.openFile(config, "C:/Users/Alexander Souza/Desktop/GIT/4Year_OOP_MeasuringDocumentSimilarity/OOP_MeasuringDocumentSimilarity/books.data");
 
 	}
 

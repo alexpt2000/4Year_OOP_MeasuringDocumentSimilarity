@@ -21,8 +21,6 @@ import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.sun.jdi.Method;
 
-import ie.gmit.sw.db4o.Books;
-
 import javax.servlet.annotation.*;
 
 /* NB: You will need to add the JAR file $TOMCAT_HOME/lib/servlet-api.jar to your CLASSPATH 
@@ -110,8 +108,24 @@ public class ServiceHandler extends HttpServlet {
 		//We could use the following to track asynchronous tasks. Comment it out otherwise...
 		if (taskNumber == null){
 			taskNumber = new String("T" + jobNumber);
+
+			checkProcessed = false;
+
+			Books requestBookResult = new Books(title, taskNumber, docsAsShingleSets);
+
+			// Add job to in-queue
+			inQueue.add(requestBookResult);
+
+			// Start the Thread
+			Runnable work = new ServiceQueue(inQueue, outQueue, service);
+			executor.execute(work);
+
 			jobNumber++;
-			//Add job to in-queue
+			
+			
+			
+			
+			
 		}else{
 			RequestDispatcher dispatcher = req.getRequestDispatcher("/poll");
 			dispatcher.forward(req,resp);
@@ -212,20 +226,7 @@ public class ServiceHandler extends HttpServlet {
 		
 		//Books book = new Books(title, docsAsShingleSets);
 
-			taskNumber = new String("T" + jobNumber);
 
-			checkProcessed = false;
-
-			Books requestBookResult = new Books(title, taskNumber, docsAsShingleSets);
-
-			// Add job to in-queue
-			inQueue.add(requestBookResult);
-
-			// Start the Thread
-			Runnable work = new ServiceQueue(inQueue, outQueue, service);
-			executor.execute(work);
-
-			jobNumber++;
 		
 		
 		

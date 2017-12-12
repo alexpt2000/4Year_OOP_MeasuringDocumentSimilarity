@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 
-import ie.gmit.sw.db4o.BooksDB;
+import ie.gmit.sw.BooksDB;
 
 public class Compare {
 

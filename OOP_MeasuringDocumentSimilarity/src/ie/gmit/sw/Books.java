@@ -1,4 +1,4 @@
-package ie.gmit.sw.db4o;
+package ie.gmit.sw;
 
 import java.util.HashMap;
 import java.util.Iterator;

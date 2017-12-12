@@ -6,8 +6,8 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Stream;
 
-import ie.gmit.sw.db4o.Books;
-import ie.gmit.sw.db4o.BooksDB;
+import ie.gmit.sw.Books;
+import ie.gmit.sw.BooksDB;
 
 public class RunnerDB {
 

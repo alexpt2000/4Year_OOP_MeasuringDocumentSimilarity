@@ -4,8 +4,6 @@ import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
-import ie.gmit.sw.db4o.Books;
-
 public class ServiceQueue implements Runnable {
 
 	private BlockingQueue<Books> inQueue;
@@ -25,13 +23,13 @@ public class ServiceQueue implements Runnable {
 		Books req = inQueue.poll();
 
 		try {
-			//System.out.println("\nChecking Status of Task No: " + req.getTaskNumber());
+			System.out.println("\nChecking Status of Task No: " + req.getTaskNumber());
 			Thread.sleep(500);
 
 			res = strSer.getBookResults(req);
 
 			//System.out.println(req.getKeyWord());
-			
+			System.out.println(" Print Tast.: " + req.getTaskNumber() + " ==== ");
 			outQueue.put(req.getTaskNumber(), res);
 		} catch (RemoteException | InterruptedException e) {
 			e.printStackTrace();

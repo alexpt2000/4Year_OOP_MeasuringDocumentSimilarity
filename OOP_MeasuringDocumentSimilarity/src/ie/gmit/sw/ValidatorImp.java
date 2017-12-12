@@ -11,27 +11,25 @@ public class ValidatorImp extends UnicastRemoteObject implements Validator {
 
 	private static final long serialVersionUID = 1L;
 	private boolean processed;
-	private List<BooksResults> result;
+	private String result;
 
 	ValidatorImp() throws RemoteException {
 		super();
 	}
 
-	public List<BooksResults> getResult() throws RemoteException {
-		return result;
-	}
-
-	public void setResult(List<BooksResults> result) throws RemoteException {
-		this.result = result;
-	}
-
-	public boolean isProcessed() throws RemoteException {
-		return processed = true;
-	}
-
-	public void setProcessed() throws RemoteException {
-		this.processed = processed;
-	}
+    public String getResult() throws RemoteException {
+        return result;
+    }
+    public void setResult(String result) throws RemoteException
+    {
+        this.result = result;
+    }
+    public boolean isProcessed() throws RemoteException{
+        return processed = true;
+    }
+    public void setProcessed() throws RemoteException{
+        this.processed = processed;
+    }
 
 
 }

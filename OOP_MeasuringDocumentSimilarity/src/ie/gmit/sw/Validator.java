@@ -5,9 +5,9 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 public interface Validator extends Remote {
-	public List<BooksResults> getResult() throws RemoteException;
+	public String getResult() throws RemoteException;
 
-	public void setResult(List<BooksResults> result) throws RemoteException;
+	public void setResult(String result) throws RemoteException;
 
 	public boolean isProcessed() throws RemoteException;
 

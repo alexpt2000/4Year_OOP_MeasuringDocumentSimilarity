@@ -17,9 +17,6 @@ import java.util.stream.Stream;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 
-import ie.gmit.sw.db4o.Books;
-import ie.gmit.sw.db4o.BooksDB;
-
 public class CompareBook {
 
 	public double similarityHashMap(Books book1, Books bookDB) {

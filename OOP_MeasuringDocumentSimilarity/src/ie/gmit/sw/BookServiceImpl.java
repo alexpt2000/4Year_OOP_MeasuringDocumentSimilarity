@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ie.gmit.sw.Compare.CompareDB;
-import ie.gmit.sw.db4o.Books;
-import ie.gmit.sw.db4o.BooksDB;
 
 public class BookServiceImpl extends UnicastRemoteObject implements BookService {
 
@@ -21,7 +19,8 @@ public class BookServiceImpl extends UnicastRemoteObject implements BookService 
 	// Find definition into ArrayList
 	public Validator getBookResults(Books book) throws RemoteException {
 
-		List<BooksResults> sendResultToPage = new ArrayList<>();
+		String sendResultToPage = "";
+		List<Books> loadDocumentsDB = new ArrayList<Books>();
 		
 		BooksResults resultSililary = new BooksResults();
 		
@@ -30,7 +29,7 @@ public class BookServiceImpl extends UnicastRemoteObject implements BookService 
 		BooksDB saveBook = new BooksDB();
 		CompareDB compare = new CompareDB();
 
-		List<Books> loadDocumentsDB = saveBook.loadAllBooks();
+		loadDocumentsDB = saveBook.loadAllBooks();
 
 		// Control of Queues
 		Validator bookCompareResults = new ValidatorImp();
@@ -40,9 +39,9 @@ public class BookServiceImpl extends UnicastRemoteObject implements BookService 
 			//double resultSililary = compare.similarityHashMap(book, books);
 			
 			resultSililary = new BooksResults(compare.similarityHashMap(book, books), books.getBookName());
-			sendResultToPage.add(resultSililary);
 			
-
+			sendResultToPage += resultSililary + " " + books.getBookName();
+			
 			if (book.getBookName().equals(books.getBookName())) {
 				existBook = true;
 			}
