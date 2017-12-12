@@ -8,7 +8,8 @@ import java.util.Map;
 public class Books {
 
 	private String bookName;
-	Map<Integer, List<Integer>> bookHash = new HashMap<>();
+	private String taskNumber;
+	private Map<Integer, List<Integer>> bookHash = new HashMap<>();
 
 	public Books() {
 		super();
@@ -21,6 +22,13 @@ public class Books {
 	public Books(String bookName, Map<Integer, List<Integer>> bookHash) {
 		super();
 		this.bookName = bookName;
+		this.bookHash = bookHash;
+	}
+
+	public Books(String bookName, String taskNumber, Map<Integer, List<Integer>> bookHash) {
+		super();
+		this.bookName = bookName;
+		this.taskNumber = taskNumber;
 		this.bookHash = bookHash;
 	}
 
@@ -38,6 +46,14 @@ public class Books {
 
 	public void setBookHash(Map<Integer, List<Integer>> bookHash) {
 		this.bookHash = bookHash;
+	}
+
+	public String getTaskNumber() {
+		return taskNumber;
+	}
+
+	public void setTaskNumber(String taskNumber) {
+		this.taskNumber = taskNumber;
 	}
 
 }

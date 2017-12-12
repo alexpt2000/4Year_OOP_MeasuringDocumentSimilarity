@@ -1,10 +1,27 @@
 package ie.gmit.sw;
 
 import java.io.*;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.stream.Collectors;
+
 import javax.servlet.*;
 import javax.servlet.http.*;
 
+import com.google.common.hash.HashFunction;
+import com.google.common.hash.Hashing;
 import com.sun.jdi.Method;
+
+import ie.gmit.sw.db4o.Books;
 
 import javax.servlet.annotation.*;
 
@@ -25,6 +42,17 @@ public class ServiceHandler extends HttpServlet {
 	 */
 	private String environmentalVariable = null; //Demo purposes only. Rename this variable to something more appropriate
 	private static long jobNumber = 0;
+	private final int POOL_SIZE = 6;
+
+	private static Map<String, Validator> outQueue;
+	private static BlockingQueue<Books> inQueue;
+	private static ExecutorService executor;
+
+	private boolean checkProcessed;
+	private String returningDefinitons;
+	private String oldKeyWord;
+	
+	private CompareBook compareBook = new CompareBook();
 
 
 	/* This method is only called once, when the servlet is first started (like a constructor). 
@@ -38,6 +66,10 @@ public class ServiceHandler extends HttpServlet {
 		//Reads the value from the <context-param> in web.xml. Any application scope variables 
 		//defined in the web.xml can be read in as follows:
 		environmentalVariable = ctx.getInitParameter("SOME_GLOBAL_OR_ENVIRONMENTAL_VARIABLE"); 
+		
+		//outQueue = new HashMap<String, Validator>();
+		inQueue = new LinkedBlockingQueue<Books>();
+		executor = Executors.newFixedThreadPool(POOL_SIZE);
 	}
 
 
@@ -50,7 +82,13 @@ public class ServiceHandler extends HttpServlet {
 	 *   3) It is standard practice for doGet() to forward the method invocation to doPost() or
 	 *      vice-versa.
 	 */
+	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
+		BookService service = null;
+		
+		CompareBook compareBook = new CompareBook();
+		
 		//Step 1) Write out the MIME type
 		resp.setContentType("text/html"); 
 		
@@ -132,18 +170,34 @@ public class ServiceHandler extends HttpServlet {
 		out.print("<font color=\"0000ff\">");	
 		BufferedReader br = new BufferedReader(new InputStreamReader(part.getInputStream()));
 		String line = null;
+		
+		Map<Integer, List<Integer>> docsAsShingleSets = new HashMap<>();
+		Random r = new Random();
+		
 		while ((line = br.readLine()) != null) {
 			//Break each line up into shingles and do something. The servlet really should act as a
 			//contoller and dispatch this task to something else... Divide and conquer...! I've been
 			//telling you all this since 2nd year...!
 			
-			
+
+			String[] words = line.split("\\s");
+
+			for (int i = 0; i < words.length; i++) {
+				words[i] = words[i].toUpperCase();
+			}
+
+			assert words.length > 2;
+
+			if (words.length > 2) {
+				
+				final String[] document = Arrays.copyOfRange(words, 1, words.length);
+				int docId = r.nextInt(200);
+				docsAsShingleSets.put(docId, new ArrayList<>(compareBook.asHashes(compareBook.asShingles(document, 3))));
+			}
+	
 //			//Use a regex that removes everything except A-Z
 //			String[] words = line.split(" ");
-//			
-//			
-//
-//			
+	
 //			for(int i= 0; i < SHINGLE_SIZE; i++){
 //				append(words[i]);
 //			}
@@ -152,17 +206,35 @@ public class ServiceHandler extends HttpServlet {
 //			
 //			put is a blocking Method.class Add is NOT!
 //			bq.put(s)			
-			
-			
-			
-			
-			
-			
+
 			out.print(line);
 		}
+		
+		//Books book = new Books(title, docsAsShingleSets);
+
+			taskNumber = new String("T" + jobNumber);
+
+			checkProcessed = false;
+
+			Books requestBookResult = new Books(title, taskNumber, docsAsShingleSets);
+
+			// Add job to in-queue
+			inQueue.add(requestBookResult);
+
+			// Start the Thread
+			Runnable work = new ServiceQueue(inQueue, outQueue, service);
+			executor.execute(work);
+
+			jobNumber++;
+		
+		
+		
+		
 		out.print("</font>");	
 	}
 	
+
+
 	
 //	private Shingle getNextShingle() {
 //		int count = 0;
@@ -179,4 +251,6 @@ public class ServiceHandler extends HttpServlet {
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		doGet(req, resp);
  	}
+	
+	
 }
