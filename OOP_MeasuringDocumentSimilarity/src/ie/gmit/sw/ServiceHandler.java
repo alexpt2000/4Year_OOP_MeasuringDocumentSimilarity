@@ -85,7 +85,7 @@ public class ServiceHandler extends HttpServlet {
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
-		BookService service = null;
+		BookService service = new BookServiceImpl();
 		
 		CompareBook compareBook = new CompareBook();
 		

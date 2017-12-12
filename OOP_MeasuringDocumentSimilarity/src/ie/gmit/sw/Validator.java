@@ -2,8 +2,7 @@ package ie.gmit.sw;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-
-import com.sun.tools.javac.util.List;
+import java.util.List;
 
 public interface Validator extends Remote {
 	public List<BooksResults> getResult() throws RemoteException;

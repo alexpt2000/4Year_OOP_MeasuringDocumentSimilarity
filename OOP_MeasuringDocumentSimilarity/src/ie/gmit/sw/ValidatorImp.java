@@ -2,8 +2,9 @@ package ie.gmit.sw;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
 
-import com.sun.tools.javac.util.List;
+
 
 // Bean Validator
 public class ValidatorImp extends UnicastRemoteObject implements Validator {
@@ -31,4 +32,6 @@ public class ValidatorImp extends UnicastRemoteObject implements Validator {
 	public void setProcessed() throws RemoteException {
 		this.processed = processed;
 	}
+
+
 }

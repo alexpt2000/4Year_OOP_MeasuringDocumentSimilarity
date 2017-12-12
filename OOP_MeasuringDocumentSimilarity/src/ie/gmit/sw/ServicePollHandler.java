@@ -57,6 +57,10 @@ public class ServicePollHandler extends HttpServlet {
 
 				// Get the Definitons of the Current Task
 				List<BooksResults> returningDefinitons = outQItem.getResult();
+				
+				for (BooksResults booksResults : returningDefinitons) {
+					out.print(booksResults.getValue() + "%  " + booksResults.getBookName());
+				}
 
 				// System.out.println("\nTask " + taskNumber + " Processed");
 				// System.out.println("String " + keyWord + " - " + returningDefinitons);
