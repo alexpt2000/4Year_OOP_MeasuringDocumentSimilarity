@@ -1,15 +1,24 @@
 package ie.gmit.sw;
 
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.*;
 import javax.servlet.http.*;
 
 public class ServicePollHandler extends HttpServlet {
+	
+	
 	public void init() throws ServletException {
 		ServletContext ctx = getServletContext();
+
+		
 	}
 
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
+		
 		resp.setContentType("text/html"); 
 		PrintWriter out = resp.getWriter(); 
 		
@@ -28,6 +37,11 @@ public class ServicePollHandler extends HttpServlet {
 		out.print("<H3>Document Title: " + title + "</H3>");
 		out.print("<b><font color=\"ff0000\">A total of " + counter + " polls have been made for this request.</font></b> ");
 		out.print("Place the final response here... a nice table (or graphic!) of the document similarity...");
+		
+			
+		
+		
+		
 		
 		out.print("<form name=\"frmRequestDetails\">");
 		out.print("<input name=\"txtTitle\" type=\"hidden\" value=\"" + title + "\">");

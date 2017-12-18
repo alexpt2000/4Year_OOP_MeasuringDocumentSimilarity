@@ -60,7 +60,8 @@ public class BooksDB {
 
 	public List<Books> loadAllBooks() {
 		// An ObjectSet is a specialised List for storing results
-		ObjectSet<Books> books = db.query(Books.class);
+		//ObjectSet<Books> books = db.query(Books.class);
+		List<Books> books = db.query(Books.class);
 
 		return books;
 	}

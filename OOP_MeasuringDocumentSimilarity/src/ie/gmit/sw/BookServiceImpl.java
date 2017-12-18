@@ -5,9 +5,10 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BookServiceImpl extends UnicastRemoteObject implements BookService {
-	private static final long serialVersionUID = 1L;
+public class BookServiceImpl {
+	//private static final long serialVersionUID = 1L;
 
+	BooksDB saveBook = new BooksDB();
 
 	public BookServiceImpl() throws RemoteException {
 		super();
@@ -15,17 +16,17 @@ public class BookServiceImpl extends UnicastRemoteObject implements BookService 
 
 
 	
-	public Validator campareBooks(Books book) throws RemoteException {
+	public String campareBooks(Books book) throws RemoteException {
 		String sendResultToPage = "";
 		boolean existBook = false;
 		double resultSililary = 0;
 
 		// Control of Queues
-		Validator resultDefinition = new ValidatorImp();
+		//Validator resultDefinition = new ValidatorImp();
 		CompareBook compare = new CompareBook();
 
 		
-		BooksDB saveBook = new BooksDB();
+		
 		List<Books> loadDocumentsDB = saveBook.loadAllBooks();
 
 		for (Books books : loadDocumentsDB) {
@@ -51,11 +52,11 @@ public class BookServiceImpl extends UnicastRemoteObject implements BookService 
 
 
 		// Set the String in result
-		resultDefinition.setResult(sendResultToPage);
+		//resultDefinition.setResult(sendResultToPage);
 
 		// Set the definition as Processed into Queue
-		resultDefinition.setProcessed();
+		//resultDefinition.setProcessed();
 
-		return resultDefinition;
+		return sendResultToPage;
 	}
 }

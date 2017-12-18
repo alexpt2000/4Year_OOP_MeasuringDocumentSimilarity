@@ -7,14 +7,15 @@ import java.util.concurrent.BlockingQueue;
 public class ServiceQueue implements Runnable {
 
 	private BlockingQueue<Books> inQueue;
-	private Map<String, Validator> outQueue;
-	private Validator res;
-	private BookService strSer;
+	private Map<String, String> outQueue;
+	//private Validator res;
+	//private BookServiceImpl bookservice = new BookServiceImpl();
+	
 
-	public ServiceQueue(BlockingQueue<Books> inQueue, Map<String, Validator> outQueue, BookService strSer) {
+
+	public ServiceQueue(BlockingQueue<Books> inQueue, Map<String, String> outQueue) {
 		this.inQueue = inQueue;
 		this.outQueue = outQueue;
-		this.strSer = strSer;
 	}
 
 	// Thread Pool
@@ -26,13 +27,19 @@ public class ServiceQueue implements Runnable {
 			//System.out.println("\nChecking Status of Task No: " + req.getTaskNumber());
 			Thread.sleep(500);
 
-			res.setResult("Funciona"); 
+			//res.setResult("Funciona"); 
 			//res = strSer.campareBooks(req);
-
-			//System.out.println(req.getKeyWord());
+			BookServiceImpl bookservice = new BookServiceImpl();
 			
-			outQueue.put(req.getTaskNumber(), res);
-		} catch (RemoteException | InterruptedException e) {
+			String result = bookservice.campareBooks(req);
+
+			System.out.println("-"+req.getTaskNumber() + " Funciona000 " );
+			
+			outQueue.put(req.getTaskNumber(), result);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

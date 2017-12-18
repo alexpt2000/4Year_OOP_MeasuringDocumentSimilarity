@@ -5,5 +5,5 @@ import java.rmi.RemoteException;
 
 // Find definition base on keyWord
 public interface BookService extends Remote {
-	public Validator campareBooks(Books book) throws RemoteException;
+	public String campareBooks(Books book) throws RemoteException;
 }

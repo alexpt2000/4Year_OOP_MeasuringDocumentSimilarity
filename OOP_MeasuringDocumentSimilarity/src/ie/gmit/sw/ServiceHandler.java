@@ -42,11 +42,12 @@ public class ServiceHandler extends HttpServlet {
 
 	private final int POOL_SIZE = 6;
 
-	private static Map<String, Validator> outQueue;
+	private static Map<String, String> outQueue;
 	private static BlockingQueue<Books> inQueue;
 	private static ExecutorService executor;
 
-	private boolean checkProcessed;
+	private boolean checkProcessed = true;
+	private Part part;
 	private String returningResult;
 
 	/* This method is only called once, when the servlet is first started (like a constructor). 
@@ -60,7 +61,7 @@ public class ServiceHandler extends HttpServlet {
 		//Reads the value from the <context-param> in web.xml. Any application scope variables 
 		//defined in the web.xml can be read in as follows:
 		environmentalVariable = ctx.getInitParameter("SOME_GLOBAL_OR_ENVIRONMENTAL_VARIABLE"); 
-		outQueue = new HashMap<String, Validator>();
+		outQueue = new HashMap<String, String>();
 		inQueue = new LinkedBlockingQueue<Books>();
 		executor = Executors.newFixedThreadPool(POOL_SIZE);
 	}
@@ -87,7 +88,11 @@ public class ServiceHandler extends HttpServlet {
 		//Step 3) Get any submitted form data. These variables are local to this method and thread safe...
 		String title = req.getParameter("txtTitle");
 		String taskNumber = req.getParameter("frmTaskNumber");
-		Part part = req.getPart("txtDocument");
+		
+		if(checkProcessed) {
+			part = req.getPart("txtDocument");
+		}
+		
 
 		// Change "bookTitle" to UpperCase and remove any blank space
 		title = title.toUpperCase().replaceAll("\\s+", "");
@@ -101,38 +106,43 @@ public class ServiceHandler extends HttpServlet {
 		
 		out.print("<h3>Uploaded Document</h3>");	
 		out.print("<font color=\"0000ff\">");	
-		BufferedReader br = new BufferedReader(new InputStreamReader(part.getInputStream()));
-		String line = null;
 		
 		Map<Integer, List<Integer>> docsAsShingleSets = new HashMap<>();
-
-		CompareBook compareBook = new CompareBook();
-		Random r = new Random();
-		
-		while ((line = br.readLine()) != null) {
-			String[] words = line.split("\\s");
-
-			for (int i = 0; i < words.length; i++) {
-				words[i] = words[i].toUpperCase();
-				out.print(words[i] + " ");
-			}
-
-			assert words.length > 2;
-
-			if (words.length > 2) {
-				
-				final String[] document = Arrays.copyOfRange(words, 1, words.length);
-				int docId = r.nextInt(200);
-				
-				docsAsShingleSets.put(docId, new ArrayList<>(compareBook.asHashes(compareBook.asShingles(document, 3))));
-			}
+		if(checkProcessed) {
+			checkProcessed = false;
+			BufferedReader br = new BufferedReader(new InputStreamReader(part.getInputStream()));
+			String line = null;
 			
-//			for (List<Integer> value : docsAsShingleSets.values()) {
-//			    System.out.println("Value = " + value);
-//			}
 			
-		out.print("</font>");
+	
+			CompareBook compareBook = new CompareBook();
+			Random r = new Random();
+			
+			while ((line = br.readLine()) != null) {
+				String[] words = line.split("\\s");
+	
+				for (int i = 0; i < words.length; i++) {
+					words[i] = words[i].toUpperCase();
+					out.print(words[i] + " ");
+				}
+	
+				assert words.length > 2;
+	
+				if (words.length > 2) {
+					
+					final String[] document = Arrays.copyOfRange(words, 1, words.length);
+					int docId = r.nextInt(200);
+					
+					docsAsShingleSets.put(docId, new ArrayList<>(compareBook.asHashes(compareBook.asShingles(document, 3))));
+				}
 				
+	//			for (List<Integer> value : docsAsShingleSets.values()) {
+	//			    System.out.println("Value = " + value);
+	//			}
+				
+			out.print("</font>");
+					
+			}
 		}
 		
 		//We could use the following to track asynchronous tasks. Comment it out otherwise...
@@ -142,17 +152,18 @@ public class ServiceHandler extends HttpServlet {
 			
 			checkProcessed = false;
 
-			Books requestBookResult = new Books(title, taskNumber, docsAsShingleSets);
+			Books requestBookResult = new Books(title, docsAsShingleSets);
 
 			// Add job to in-queue
 			inQueue.add(requestBookResult);
 
 			// Start the Thread
-			Runnable work = new ServiceQueue(inQueue, outQueue, service);
+			Runnable work = new ServiceQueue(inQueue, outQueue);
 			executor.execute(work);
 			
 			//Add job to in-queue
-		}else{
+		}else {
+
 			//RequestDispatcher dispatcher = req.getRequestDispatcher("/poll");
 			//dispatcher.forward(req,resp);
 			//Check out-queue for finished job with the given taskNumber
@@ -160,25 +171,26 @@ public class ServiceHandler extends HttpServlet {
 			if (outQueue.containsKey(taskNumber)) {
 
 				// get the Resultator object from outMap based on tasknumber
-				Validator outQItem = outQueue.get(taskNumber);
+				//Validator outQItem = outQueue.get(taskNumber);
 
 				// System.out.println("\nChecking Status of Task No:" + taskNumber);
 
 				// Check out-queue for finished job with the given taskNumber
-				checkProcessed = outQItem.isProcessed();
+				//checkProcessed = outQItem.isProcessed();
 
-				// Check to see if the Resultator Item is Processed
-				if (checkProcessed == true) {
-					// Remove the processed item from Map by taskNumber
-					outQueue.remove(taskNumber);
+				// Get the Definitons of the Current Task
+				String returningResult = outQueue.get(taskNumber);
+				
+				System.out.println("So Task number.: " + taskNumber );
 
-					// Get the Definitons of the Current Task
-					returningResult = outQItem.getResult();
-
-					System.out.println("Result.: " + returningResult );
-					// System.out.println("String " + keyWord + " - " + returningDefinitons);
-				}
+				// Remove the processed item from Map by taskNumber
+				outQueue.remove(taskNumber);
+				
+				System.out.println("Result.: " + returningResult );
+				// System.out.println("String " + keyWord + " - " + returningDefinitons);
+				
 			}
+			
 			
 			
 		}
@@ -209,7 +221,8 @@ public class ServiceHandler extends HttpServlet {
 		
 		//We can also dynamically write out a form using hidden form fields. The form itself is not
 		//visible in the browser, but the JavaScript below can see it.
-		out.print("<form name=\"frmRequestDetails\" action=\"poll\">");
+		//out.print("<form name=\"frmRequestDetails\" action=\"poll\">");
+		out.print("<form name=\"frmRequestDetails\">");
 		out.print("<input name=\"txtTitle\" type=\"hidden\" value=\"" + title + "\">");
 		out.print("<input name=\"frmTaskNumber\" type=\"hidden\" value=\"" + taskNumber + "\">");
 		out.print("</form>");								
