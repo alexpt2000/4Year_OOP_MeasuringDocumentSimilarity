@@ -11,6 +11,7 @@ import com.db4o.ObjectSet;
 import com.db4o.config.ConfigScope;
 import com.db4o.config.EmbeddedConfiguration;
 import com.db4o.ext.DatabaseClosedException;
+import com.db4o.ext.DatabaseReadOnlyException;
 import com.db4o.ext.Db4oIOException;
 import com.db4o.io.MemoryStorage;
 import com.db4o.query.Predicate;
@@ -22,7 +23,7 @@ import xtea_db4o.XTeaEncryptionStorage;
 
 public class BooksDB {
 	private ObjectContainer db = null;
-	// private List<Books> book = new ArrayList<Books>();
+
 
 	public BooksDB() {
 		
@@ -51,11 +52,14 @@ public class BooksDB {
 	 * db.set(object).
 	 */
 	public void addBookssToDatabase(Books book) {
-		db.store(book);
-		db.commit(); // Commits the transaction
-		// db.rollback(); //Rolls back the transaction
-
-		// System.out.println("Doc saved .: " + book.getBookName());
+		ObjectContainer containerDB = db.ext().openSession();
+		try {
+			containerDB.store(book);
+			containerDB.commit(); // Commits the transaction
+			// db.rollback(); //Rolls back the transaction
+		} finally {
+			containerDB.close();
+		} 
 	}
 
 	public void showAllBooks() {

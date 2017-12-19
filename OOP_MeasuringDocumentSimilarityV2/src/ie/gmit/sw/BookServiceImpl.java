@@ -9,6 +9,7 @@ public class BookServiceImpl extends UnicastRemoteObject implements BookService 
 	private static final long serialVersionUID = 1L;
 
 
+
 	public BookServiceImpl() throws RemoteException {
 		super();
 	}
@@ -19,13 +20,13 @@ public class BookServiceImpl extends UnicastRemoteObject implements BookService 
 		String sendResultToPage = "";
 		boolean existBook = false;
 		double resultSililary = 0;
+		
+		 CompareBook compare = new CompareBook();
+		 BooksDB saveBook = new BooksDB();
 
 		// Control of Queues
 		Validator resultDefinition = new ValidatorImp();
-		CompareBook compare = new CompareBook();
 
-		
-		BooksDB saveBook = new BooksDB();
 		List<Books> loadDocumentsDB = saveBook.loadAllBooks();
 
 		for (Books books : loadDocumentsDB) {

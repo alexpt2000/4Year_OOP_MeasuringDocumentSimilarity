@@ -50,6 +50,7 @@ public class ServiceHandler extends HttpServlet {
 	private String returningResult;
 	private boolean firstTime = true;
 	private Part part;
+	private Runnable work = new ServiceQueue();
 
 
 	/* This method is only called once, when the servlet is first started (like a constructor). 
@@ -149,9 +150,11 @@ public class ServiceHandler extends HttpServlet {
 			inQueue.add(requestBookResult);
 
 			// Start the Thread
-			Runnable work = new ServiceQueue(inQueue, outQueue, service);
+			//Runnable work = new ServiceQueue(inQueue, outQueue, service);
+			//Runnable work = new ServiceQueue(inQueue, outQueue, service);
+			work = new ServiceQueue(inQueue, outQueue, service);
 			executor.execute(work);
-
+			
 			jobNumber++;
 		} else {
 
@@ -173,6 +176,8 @@ public class ServiceHandler extends HttpServlet {
 					// Get the Definitons of the Current Task
 					returningResult = outQItem.getResult();
 
+					//((ServiceQueue) work).stop();
+					
 					System.out.println("Result.: " + returningResult );
 					// System.out.println("String " + keyWord + " - " + returningDefinitons);
 				}

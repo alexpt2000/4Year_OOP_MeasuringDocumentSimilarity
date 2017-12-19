@@ -10,6 +10,13 @@ public class ServiceQueue implements Runnable {
 	private Map<String, Validator> outQueue;
 	private Validator res;
 	private BookService strSer;
+	private volatile boolean exit = false;
+
+	
+	
+	public ServiceQueue() {
+		super();
+	}
 
 	public ServiceQueue(BlockingQueue<Books> inQueue, Map<String, Validator> outQueue, BookService strSer) {
 		this.inQueue = inQueue;
@@ -20,21 +27,27 @@ public class ServiceQueue implements Runnable {
 	// Thread Pool
 	@Override
 	public void run() {
-		Books req = inQueue.poll();
-
-		try {
-			//System.out.println("\nChecking Status of Task No: " + req.getTaskNumber());
-			Thread.sleep(500);
-
-			res = strSer.campareBooks(req);
-
-			//System.out.println(req.getKeyWord());
-			
-			outQueue.put(req.getTaskNumber(), res);
-		} catch (RemoteException | InterruptedException e) {
-			e.printStackTrace();
+		while(!exit) {
+			Books req = inQueue.poll();
+	
+			try {
+				//System.out.println("\nChecking Status of Task No: " + req.getTaskNumber());
+				Thread.sleep(1000);
+	
+				res = strSer.campareBooks(req);
+	
+				//System.out.println(req.getKeyWord());
+				
+				outQueue.put(req.getTaskNumber(), res);
+			} catch (RemoteException | InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 
 	}
+	
+    public void stop(){
+        exit = true;
+    }
 
 }
