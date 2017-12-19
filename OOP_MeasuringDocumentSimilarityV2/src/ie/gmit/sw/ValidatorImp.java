@@ -2,23 +2,24 @@ package ie.gmit.sw;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
 
 // Bean Validator
 public class ValidatorImp extends UnicastRemoteObject implements Validator {
 
 	private static final long serialVersionUID = 1L;
 	private boolean processed;
-	private String result;
+	private List<BooksResults> result;
 
 	ValidatorImp() throws RemoteException {
 		super();
 	}
 
-	public String getResult() throws RemoteException {
+	public List<BooksResults> getResult() throws RemoteException {
 		return result;
 	}
 
-	public void setResult(String result) throws RemoteException {
+	public void setResult(List<BooksResults> result) throws RemoteException {
 		this.result = result;
 	}
 
@@ -29,4 +30,6 @@ public class ValidatorImp extends UnicastRemoteObject implements Validator {
 	public void setProcessed() throws RemoteException {
 		this.processed = processed;
 	}
+
+
 }

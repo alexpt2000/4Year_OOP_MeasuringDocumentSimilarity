@@ -56,7 +56,7 @@ public class ServicePollHandler extends HttpServlet {
 				outQueue.remove(taskNumber);
 
 				// Get the Definitons of the Current Task
-				String returningDefinitons = outQItem.getResult();
+				List<BooksResults> returningDefinitons = outQItem.getResult();
 				
 				
 					out.print(returningDefinitons);

@@ -49,7 +49,7 @@ public class ServiceHandler extends HttpServlet {
 	private List<String> initialBook = new ArrayList<>();
 
 	private boolean checkProcessed;
-	private String returningResult;
+	private List<BooksResults> returningResult;
 	private boolean firstTime = true;
 	private Part part;
 	private Runnable work = new ServiceQueue();
@@ -176,7 +176,11 @@ public class ServiceHandler extends HttpServlet {
 
 					//((ServiceQueue) work).stop();
 					
-					System.out.println("Result.: " + returningResult );
+					for (BooksResults results : returningResult) {
+						System.out.println("Result.: " + results.getValue() + "%   Book Name.: " + results.getBookName());
+					}
+					
+					//System.out.println("Result.: " + returningResult );
 					// System.out.println("String " + keyWord + " - " + returningDefinitons);
 				}
 			}
@@ -233,13 +237,20 @@ public class ServiceHandler extends HttpServlet {
 		out.print("var color = Chart.helpers.color;");
 		out.print("var barChartData = {");
 		out.print("labels: [");
-		out.print("\"January\",");
-		out.print("\"February\",");
-		out.print("\"March\",");
-		out.print("\"April\",");
-		out.print("\"May\",");
-		out.print("\"June\",");
-		out.print("\"July\",");
+		
+		for (BooksResults results : returningResult) {
+			out.print("\"" +  results.getBookName() + "\",");
+		}
+		
+//		out.print("\"January\",");
+//		out.print("\"February\",");
+//		out.print("\"March\",");
+//		out.print("\"April\",");
+//		out.print("\"May\",");
+//		out.print("\"June\",");
+//		out.print("\"July\",");
+		
+		
 		out.print(" ],");
 		out.print("datasets: [{");
 		out.print(" label: '"+bookTitle+"',");
@@ -247,13 +258,19 @@ public class ServiceHandler extends HttpServlet {
 		out.print(" borderColor: window.chartColors.red,");
 		out.print("borderWidth: 1,");
 		out.print("data: [");
-		out.print("40,");
-		out.print("10,");
-		out.print("90,");
-		out.print("2,");
-		out.print("100,");
-		out.print("30,");
-		out.print("99,");
+		
+		for (BooksResults results : returningResult) {
+			out.print(results.getValue() + ",");
+		}
+//		out.print("40,");
+//		out.print("10,");
+//		out.print("90,");
+//		out.print("2,");
+//		out.print("100,");
+//		out.print("30,");
+//		out.print("99,");
+		
+		
 		out.print("]");
 		out.print("}]");
 		

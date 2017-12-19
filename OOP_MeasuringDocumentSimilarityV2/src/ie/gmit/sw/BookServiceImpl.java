@@ -16,8 +16,9 @@ public class BookServiceImpl extends UnicastRemoteObject implements BookService 
 
 
 	
+
 	public Validator campareBooks(Books book) throws RemoteException {
-		String sendResultToPage = "";
+		List<BooksResults> sendResultToPage = new ArrayList<BooksResults>();
 		boolean existBook = false;
 		double resultSililary = 0;
 		
@@ -35,7 +36,8 @@ public class BookServiceImpl extends UnicastRemoteObject implements BookService 
 			
 			resultSililary = compare.similarityHashMap(book, books);
 			
-			sendResultToPage += "\n" + resultSililary + "%  = " + books.getBookName();
+			//sendResultToPage += "\n" + resultSililary + "%  = " + books.getBookName();
+			sendResultToPage.add(new BooksResults(resultSililary, books.getBookName()));
 			
 			if (book.getBookName().equals(books.getBookName())) {
 				existBook = true;
