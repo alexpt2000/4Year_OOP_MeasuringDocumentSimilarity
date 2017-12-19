@@ -1,8 +1,11 @@
 package ie.gmit.sw;
 
 import java.rmi.RemoteException;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+
+import ie.gmit.sw.Runner.CompareDB;
 
 public class ServiceQueue implements Runnable {
 
@@ -10,6 +13,11 @@ public class ServiceQueue implements Runnable {
 	private Map<String, String> outQueue;
 	//private Validator res;
 	//private BookServiceImpl bookservice = new BookServiceImpl();
+	
+	//BookServiceImpl bookservice = new BookServiceImpl();
+	
+	private BooksDB saveBook = new BooksDB();
+	private CompareBook compare = new CompareBook();
 	
 
 
@@ -29,17 +37,24 @@ public class ServiceQueue implements Runnable {
 
 			//res.setResult("Funciona"); 
 			//res = strSer.campareBooks(req);
-			BookServiceImpl bookservice = new BookServiceImpl();
+
+
+			List<Books> loadDocumentsDB = saveBook.loadAllBooks();
 			
-			String result = bookservice.campareBooks(req);
+			for (Books books : loadDocumentsDB) {
+
+				System.out.println(String.format("%.2f", (compare.similarityHashMap(req, books)))
+						+ " %" + "\t\t" + books.getBookName());
+
+			}
+
+			
+			//String result = bookservice.campareBooks(req);
 
 			System.out.println("-"+req.getTaskNumber() + " Funciona000 " );
 			
-			outQueue.put(req.getTaskNumber(), result);
+			outQueue.put(req.getTaskNumber(), "Testresult");
 		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

@@ -1,22 +1,31 @@
 package ie.gmit.sw;
 
-import com.db4o.*;
-import com.db4o.config.*;
-import com.db4o.query.*;
-import com.db4o.ta.*;
+import static java.lang.System.out;
+
+import java.util.List;
+import java.util.Map;
+
+import com.db4o.Db4oEmbedded;
+import com.db4o.ObjectContainer;
+import com.db4o.ObjectSet;
+import com.db4o.config.ConfigScope;
+import com.db4o.config.EmbeddedConfiguration;
+import com.db4o.ext.DatabaseClosedException;
+import com.db4o.ext.Db4oIOException;
+import com.db4o.io.MemoryStorage;
+import com.db4o.query.Predicate;
+import com.db4o.ta.TransparentActivationSupport;
+import com.db4o.ta.TransparentPersistenceSupport;
 
 import xtea_db4o.XTEA;
 import xtea_db4o.XTeaEncryptionStorage;
-
-import java.util.*;
-
-import static java.lang.System.*;
 
 public class BooksDB {
 	private ObjectContainer db = null;
 	// private List<Books> book = new ArrayList<Books>();
 
 	public BooksDB() {
+		
 		EmbeddedConfiguration config = Db4oEmbedded.newConfiguration();
 		config.common().add(new TransparentActivationSupport()); // Real lazy. Saves all the config commented out below
 		config.common().add(new TransparentPersistenceSupport()); // Lazier still. Saves all the config commented out
@@ -31,7 +40,10 @@ public class BooksDB {
 		// client / server
 		db = Db4oEmbedded.openFile(config, "C:/books/books.data");
 
+
 	}
+	
+
 
 	/*
 	 * Once we get a handle on an ObjectContainer, we are working in a transactional
@@ -59,8 +71,14 @@ public class BooksDB {
 	}
 
 	public List<Books> loadAllBooks() {
+		ObjectContainer containerDB = db.ext().openSession();
 		// An ObjectSet is a specialised List for storing results
-		ObjectSet<Books> books = db.query(Books.class);
+		ObjectSet<Books> books;
+		try {
+			books = containerDB.query(Books.class);
+		} finally {
+			containerDB.close();
+		}
 
 		return books;
 	}

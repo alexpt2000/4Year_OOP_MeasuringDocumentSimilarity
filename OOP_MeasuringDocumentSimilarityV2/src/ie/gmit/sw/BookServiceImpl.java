@@ -34,7 +34,7 @@ public class BookServiceImpl extends UnicastRemoteObject implements BookService 
 			
 			resultSililary = compare.similarityHashMap(book, books);
 			
-			sendResultToPage += resultSililary + "%  = " + books.getBookName();
+			sendResultToPage += "\n" + resultSililary + "%  = " + books.getBookName();
 			
 			if (book.getBookName().equals(books.getBookName())) {
 				existBook = true;

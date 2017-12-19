@@ -4,6 +4,7 @@ import com.db4o.*;
 import com.db4o.config.*;
 import com.db4o.query.*;
 import com.db4o.ta.*;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import xtea_db4o.XTEA;
 import xtea_db4o.XTeaEncryptionStorage;
@@ -14,6 +15,7 @@ import static java.lang.System.*;
 
 public class BooksDB {
 	private ObjectContainer db = null;
+	private CompareBook compare = new CompareBook();
 	// private List<Books> book = new ArrayList<Books>();
 
 	public BooksDB() {
@@ -58,12 +60,27 @@ public class BooksDB {
 		}
 	}
 
-	public List<Books> loadAllBooks() {
+	public ObjectSet<Books> loadAllBooks() {
+
 		// An ObjectSet is a specialised List for storing results
-		//ObjectSet<Books> books = db.query(Books.class);
-		List<Books> books = db.query(Books.class);
+		ObjectSet<Books> books = db.query(Books.class);
 
 		return books;
+	}
+	
+	public void loadAllBooksCompare(Books bookToCompare) {
+
+		//final long serialVersionUID = 777L;
+		// An ObjectSet is a specialised List for storing results
+		System.out.println("test1");
+		ObjectSet<Books> books = db.query(Books.class);
+		System.out.println("test2");
+		for (Books book : books) {
+			//System.out.println(book.getBookName());
+			System.out.println(String.format("%.2f", (compare.similarityHashMap(bookToCompare, book))) + " %" + "\t\t" + book.getBookName());
+
+		}
+
 	}
 
 	// ****************** Best ************************

@@ -19,11 +19,7 @@ public class Books {
 		super();
 	}
 
-	public Books(String bookName, Map<Integer, List<Integer>> bookHash) {
-		super();
-		this.bookName = bookName;
-		this.bookHash = bookHash;
-	}
+
 
 	public Books(String bookName, String taskNumber, Map<Integer, List<Integer>> bookHash) {
 		super();
