@@ -11,22 +11,26 @@ import com.db4o.ObjectSet;
 import com.db4o.config.ConfigScope;
 import com.db4o.config.EmbeddedConfiguration;
 import com.db4o.ext.DatabaseClosedException;
+import com.db4o.ext.DatabaseFileLockedException;
 import com.db4o.ext.DatabaseReadOnlyException;
 import com.db4o.ext.Db4oIOException;
+import com.db4o.ext.IncompatibleFileFormatException;
+import com.db4o.ext.OldFormatException;
 import com.db4o.io.MemoryStorage;
 import com.db4o.query.Predicate;
 import com.db4o.ta.TransparentActivationSupport;
 import com.db4o.ta.TransparentPersistenceSupport;
+import com.sun.istack.internal.NotNull;
 
 import xtea_db4o.XTEA;
 import xtea_db4o.XTeaEncryptionStorage;
 
 public class BooksDB {
 	private ObjectContainer db = null;
-
+	private ObjectContainer containerDB = null;
 
 	public BooksDB() {
-		
+
 		EmbeddedConfiguration config = Db4oEmbedded.newConfiguration();
 		config.common().add(new TransparentActivationSupport()); // Real lazy. Saves all the config commented out below
 		config.common().add(new TransparentPersistenceSupport()); // Lazier still. Saves all the config commented out
@@ -39,12 +43,21 @@ public class BooksDB {
 
 		// Open a local database. Use Db4o.openServer(config, server, port) for full
 		// client / server
-		db = Db4oEmbedded.openFile(config, "C:/books/books.data");
-
+		try {
+			db = Db4oEmbedded.openFile(config, "C:/books/books.data");
+		} catch (Db4oIOException e) {
+			// e.printStackTrace();
+		} catch (DatabaseFileLockedException e) {
+			// e.printStackTrace();
+		} catch (IncompatibleFileFormatException e) {
+			// e.printStackTrace();
+		} catch (OldFormatException e) {
+			// e.printStackTrace();
+		} catch (DatabaseReadOnlyException e) {
+			// e.printStackTrace();
+		}
 
 	}
-	
-
 
 	/*
 	 * Once we get a handle on an ObjectContainer, we are working in a transactional
@@ -52,14 +65,14 @@ public class BooksDB {
 	 * db.set(object).
 	 */
 	public void addBookssToDatabase(Books book) {
-		ObjectContainer containerDB = db.ext().openSession();
+		containerDB = db.ext().openSession();
 		try {
 			containerDB.store(book);
 			containerDB.commit(); // Commits the transaction
 			// db.rollback(); //Rolls back the transaction
 		} finally {
 			containerDB.close();
-		} 
+		}
 	}
 
 	public void showAllBooks() {
@@ -75,14 +88,13 @@ public class BooksDB {
 	}
 
 	public List<Books> loadAllBooks() {
-		ObjectContainer containerDB = db.ext().openSession();
-		// An ObjectSet is a specialised List for storing results
 		ObjectSet<Books> books;
-		try {
-			books = containerDB.query(Books.class);
-		} finally {
-			containerDB.close();
-		}
+
+		containerDB = db.ext().openSession();
+
+		books = containerDB.query(Books.class);
+
+		// An ObjectSet is a specialised List for storing results
 
 		return books;
 	}

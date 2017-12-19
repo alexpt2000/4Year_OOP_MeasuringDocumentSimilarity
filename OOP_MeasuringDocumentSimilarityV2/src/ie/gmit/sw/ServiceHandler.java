@@ -45,6 +45,8 @@ public class ServiceHandler extends HttpServlet {
 	private static Map<String, Validator> outQueue;
 	private static BlockingQueue<Books> inQueue;
 	private static ExecutorService executor;
+	private Map<Integer, List<Integer>> docsAsShingleSets = new HashMap<>();
+	private List<String> initialBook = new ArrayList<>();
 
 	private boolean checkProcessed;
 	private String returningResult;
@@ -103,8 +105,6 @@ public class ServiceHandler extends HttpServlet {
 		out.print("</head>");		
 		out.print("<body>");
 		
-
-
 		// We could use the following to track asynchronous tasks. Comment it out
 		// otherwise...
 		if (taskNumber == null) {
@@ -114,31 +114,29 @@ public class ServiceHandler extends HttpServlet {
 			
 			BufferedReader br = new BufferedReader(new InputStreamReader(part.getInputStream()));
 			String line = null;
-			
-			Map<Integer, List<Integer>> docsAsShingleSets = new HashMap<>();
-
 			Random r = new Random();
+			int count = 0;
+			
 			
 			while ((line = br.readLine()) != null) {
-
+				count++;
 				String[] words = line.split("\\s");
+				
+				initialBook.add(count + " - " + line + "<br>");
 
 				for (int i = 0; i < words.length; i++) {
 					words[i] = words[i].toUpperCase();
 				}
-
 				assert words.length > 2;
 
-				if (words.length > 2) {
-					
+				if (words.length > 2) {					
 					final String[] document = Arrays.copyOfRange(words, 1, words.length);
 					int docId = r.nextInt(200);
 					
 					docsAsShingleSets.put(docId, new ArrayList<>(compareBook.asHashes(compareBook.asShingles(document, 3))));
 				}
 		
-
-				out.print(line);
+				//out.print(line);
 			}
 			
 
@@ -190,28 +188,14 @@ public class ServiceHandler extends HttpServlet {
 		
 		
 		//Output some useful information for you (yes YOU!)
-		out.print("<div id=\"r\"></div>");
-		out.print("<font color=\"#993333\"><b>");
-		out.print("Environmental Variable Read from web.xml: " + environmentalVariable);
-		out.print("<br>This servlet should only be responsible for handling client request and returning responses. Everything else should be handled by different objects.");
-		out.print("Note that any variables declared inside this doGet() method are thread safe. Anything defined at a class level is shared between HTTP requests.");				
-		out.print("</b></font>");
-		
-		out.print("<h3>Compiling and Packaging this Application</h3>");
-		out.print("Place any servlets or Java classes in the WEB-INF/classes directory. Alternatively package "); 
-		out.print("these resources as a JAR archive in the WEB-INF/lib directory using by executing the ");  
-		out.print("following command from the WEB-INF/classes directory jar -cf my-library.jar *");
-		
-		out.print("<ol>");
-		out.print("<li><b>Compile on Mac/Linux:</b> javac -cp .:$TOMCAT_HOME/lib/servlet-api.jar WEB-INF/classes/ie/gmit/sw/*.java");
-		out.print("<li><b>Compile on Windows:</b> javac -cp .;%TOMCAT_HOME%/lib/servlet-api.jar WEB-INF/classes/ie/gmit/sw/*.java");
-		out.print("<li><b>Build JAR Archive:</b> jar -cf jaccard.war *");
-		out.print("</ol>");
+	
+
 		
 		//We can also dynamically write out a form using hidden form fields. The form itself is not
 		//visible in the browser, but the JavaScript below can see it.
 		//out.print("<form name=\"frmRequestDetails\" action=\"poll\">");
 		out.print("<form name=\"frmRequestDetails\">");
+		//out.print("<form name=\"frmRequestDetails1\" action=\"poll\">");
 		out.print("<input name=\"txtTitle\" type=\"hidden\" value=\"" + bookTitle + "\">");
 		out.print("<input name=\"frmTaskNumber\" type=\"hidden\" value=\"" + taskNumber + "\">");
 		out.print("</form>");								
@@ -221,27 +205,103 @@ public class ServiceHandler extends HttpServlet {
 		//JavaScript to periodically poll the server for updates (this is ideal for an asynchronous operation)
 		out.print("<script>");
 		out.print("var wait=setTimeout(\"document.frmRequestDetails.submit();\", 10000);"); //Refresh every 10 seconds
+		//out.print("var wait=setTimeout(\"document.frmRequestDetails1.submit();\", 10000);"); //Refresh every 10 seconds
 		out.print("</script>");
 		
+
+	
 		
-			
-		/* File Upload: The following few lines read the multipart/form-data from an instance of the
-		 * interface Part that is accessed by Part part = req.getPart("txtDocument"). We can read 
-		 * bytes or arrays of bytes by calling read() on the InputStream of the Part object. In this
-		 * case, we are only interested in text files, so it's as easy to buffer the bytes as characters
-		 * to enable the servlet to read the uploaded file line-by-line. Note that the uplaod action
-		 * can be easily completed by writing the file to disk if necessary. The following lines just
-		 * read the document from memory... this might not be a good idea if the file size is large!
-		 */
+		out.print("<script src=\"http://www.chartjs.org/dist/2.7.1/Chart.bundle.js\">");
+		out.print("</script><style type=\"text/css\">");
+		
+		out.print("@-webkit-keyframes chartjs-render-animation{from{opacity:0.99}to{opacity:1}}@keyframes chartjs-render-animation{from{opacity:0.99}to{opacity:1}}.chartjs-render-monitor{-webkit-animation:chartjs-render-animation 0.001s;animation:chartjs-render-animation 0.001s;}</style>");
+		out.print("<script src=\"http://www.chartjs.org/samples/latest/utils.js\"></script>");
+		
+		out.print("<style>");
+		out.print("canvas {");
+		out.print("    -moz-user-select: none;");
+		out.print("    -webkit-user-select: none;");
+		out.print("    -ms-user-select: none;");
+		out.print("}");
+		out.print("</style>");
+		
+		//out.print("<body data-gr-c-s-loaded=\"true\">");
+		out.print(" <div id=\"container\" style=\"width: 75%;\"><div class=\"chartjs-size-monitor\" style=\"position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;\"><div class=\"chartjs-size-monitor-expand\" style=\"position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;\"><div style=\"position:absolute;width:1000000px;height:1000000px;left:0;top:0\"></div></div><div class=\"chartjs-size-monitor-shrink\" style=\"position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;\"><div style=\"position:absolute;width:200%;height:200%;left:0; top:0\"></div></div></div>");
+		out.print("<canvas id=\"canvas\" width=\"1062\" height=\"531\" class=\"chartjs-render-monitor\" style=\"display: block; width: 1062px; height: 531px;\"></canvas>");
+		out.print("</div>");
+		out.print("<script>");
+		out.print("var color = Chart.helpers.color;");
+		out.print("var barChartData = {");
+		out.print("labels: [");
+		out.print("\"January\",");
+		out.print("\"February\",");
+		out.print("\"March\",");
+		out.print("\"April\",");
+		out.print("\"May\",");
+		out.print("\"June\",");
+		out.print("\"July\",");
+		out.print(" ],");
+		out.print("datasets: [{");
+		out.print(" label: '"+bookTitle+"',");
+		out.print("backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),");
+		out.print(" borderColor: window.chartColors.red,");
+		out.print("borderWidth: 1,");
+		out.print("data: [");
+		out.print("40,");
+		out.print("10,");
+		out.print("90,");
+		out.print("2,");
+		out.print("100,");
+		out.print("30,");
+		out.print("99,");
+		out.print("]");
+		out.print("}]");
+		
+		out.print("};");
+		
+		out.print("window.onload = function() {");
+		out.print("var ctx = document.getElementById(\"canvas\").getContext(\"2d\");");
+		out.print("window.myBar = new Chart(ctx, {");
+		out.print("type: 'bar',");
+		out.print("data: barChartData,");
+		out.print("options: {");
+		out.print("responsive: true,");
+		out.print("legend: {");
+		out.print("position: 'top',");
+		out.print("},");
+		out.print("title: {");
+		out.print("display: true,");
+		out.print("text: 'Compare'");
+		out.print("}");
+		out.print("}");
+		out.print("});");
+		
+		out.print("};");
+		out.print("</script>");
+		
+
+		
+
 		out.print("<h3>Uploaded Document</h3>");	
 		out.print("<font color=\"0000ff\">");	
 
-		out.print("</font>");	
+		for (int i = 0; i < 15; i++) {
+		out.print(initialBook.get(i)); 
+		}
+		out.print("</font>");
+		
+		
+		
+		
+		
+		
+		
+		
+		
 	}
 	
 
 	
-
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		doGet(req, resp);
  	}
