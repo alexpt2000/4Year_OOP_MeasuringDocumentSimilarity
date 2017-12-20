@@ -3,7 +3,7 @@
   realizations="true" associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
   <interface id="1" language="java" name="ie.gmit.sw.BookService" project="OOP_MeasuringDocumentSimilarityV2" 
     file="/OOP_MeasuringDocumentSimilarityV2/src/ie/gmit/sw/BookService.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="156" y="461"/>    
+    <position height="-1" width="-1" x="441" y="250"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -12,7 +12,7 @@
   </interface>  
   <class id="2" language="java" name="ie.gmit.sw.BooksResults" project="OOP_MeasuringDocumentSimilarityV2" 
     file="/OOP_MeasuringDocumentSimilarityV2/src/ie/gmit/sw/BooksResults.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="909" y="440"/>    
+    <position height="-1" width="-1" x="881" y="158"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -21,7 +21,7 @@
   </class>  
   <class id="3" language="java" name="ie.gmit.sw.BookServiceImpl" project="OOP_MeasuringDocumentSimilarityV2" 
     file="/OOP_MeasuringDocumentSimilarityV2/src/ie/gmit/sw/BookServiceImpl.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="428" y="243"/>    
+    <position height="-1" width="-1" x="436" y="103"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -30,7 +30,7 @@
   </class>  
   <class id="4" language="java" name="ie.gmit.sw.ServiceQueue" project="OOP_MeasuringDocumentSimilarityV2" 
     file="/OOP_MeasuringDocumentSimilarityV2/src/ie/gmit/sw/ServiceQueue.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="197" y="634"/>    
+    <position height="-1" width="-1" x="795" y="646"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -39,7 +39,7 @@
   </class>  
   <class id="5" language="java" name="ie.gmit.sw.ServiceHandler" project="OOP_MeasuringDocumentSimilarityV2" 
     file="/OOP_MeasuringDocumentSimilarityV2/src/ie/gmit/sw/ServiceHandler.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1169" y="161"/>    
+    <position height="-1" width="-1" x="1162" y="191"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -48,7 +48,7 @@
   </class>  
   <class id="6" language="java" name="ie.gmit.sw.BooksDB" project="OOP_MeasuringDocumentSimilarityV2" 
     file="/OOP_MeasuringDocumentSimilarityV2/src/ie/gmit/sw/BooksDB.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="124" y="105"/>    
+    <position height="-1" width="-1" x="451" y="457"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -57,7 +57,7 @@
   </class>  
   <class id="7" language="java" name="ie.gmit.sw.CompareBook" project="OOP_MeasuringDocumentSimilarityV2" 
     file="/OOP_MeasuringDocumentSimilarityV2/src/ie/gmit/sw/CompareBook.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="130" y="303"/>    
+    <position height="-1" width="-1" x="467" y="639"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -66,7 +66,7 @@
   </class>  
   <interface id="8" language="java" name="ie.gmit.sw.Validator" project="OOP_MeasuringDocumentSimilarityV2" 
     file="/OOP_MeasuringDocumentSimilarityV2/src/ie/gmit/sw/Validator.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="745" y="103"/>    
+    <position height="-1" width="-1" x="874" y="410"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -84,7 +84,7 @@
   </class>  
   <class id="10" language="java" name="ie.gmit.sw.ValidatorImp" project="OOP_MeasuringDocumentSimilarityV2" 
     file="/OOP_MeasuringDocumentSimilarityV2/src/ie/gmit/sw/ValidatorImp.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="657" y="433"/>    
+    <position height="-1" width="-1" x="638" y="166"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -100,6 +100,7 @@
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="14">    
+    <bendpoint x="774" y="529"/>    
     <end type="SOURCE" refId="4" navigable="false">      
       <attribute id="15" name="outQueue"/>      
       <multiplicity id="16" minimum="0" maximum="2147483647"/>    
