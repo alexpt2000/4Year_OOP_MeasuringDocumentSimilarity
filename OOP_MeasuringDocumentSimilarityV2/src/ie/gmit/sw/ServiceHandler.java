@@ -42,6 +42,7 @@ public class ServiceHandler extends HttpServlet {
 	private static Map<String, Validator> outQueue;
 	private static BlockingQueue<Books> inQueue;
 	private static ExecutorService executor;
+	
 	private Map<Integer, List<Integer>> docsAsShingleSets = new HashMap<>();
 	private List<String> initialBook = new ArrayList<>();
 
@@ -98,24 +99,20 @@ public class ServiceHandler extends HttpServlet {
 		// Step 4) Process the input and write out the response.
 		// The following string should be extracted as a context from web.xml
 		out.print("<html><head><title>A JEE Application for Measuring Document Similarity</title>");
-
 		out.print("<meta charset=\"utf-8\">");
 		out.print("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
 		out.print(
 				"<link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css\" type=\"text/css\">");
 		out.print(
 				"<link rel=\"stylesheet\" href=\"https://v40.pingendo.com/assets/bootstrap/bootstrap-4.0.0-beta.1.css\" type=\"text/css\"> ");
-
 		out.print("</head>");
 		out.print("<body>");
 
-		// We could use the following to track asynchronous tasks. Comment it out
-		// otherwise...
+
 		if (taskNumber == null) {
 			taskNumber = new String("T" + jobNumber);
 
 			Part part = req.getPart("txtDocument");
-
 
 			BufferedReader br = new BufferedReader(new InputStreamReader(part.getInputStream()));
 			String line = null;
@@ -123,23 +120,19 @@ public class ServiceHandler extends HttpServlet {
 
 			while ((line = br.readLine()) != null) {
 				String[] words = line.split("\\s");
-
 				initialBook.add(line);
 
 				for (int i = 0; i < words.length; i++) {
 					words[i] = words[i].toUpperCase();
 				}
+
 				assert words.length > 2;
 
 				if (words.length > 2) {
 					final String[] document = Arrays.copyOfRange(words, 1, words.length);
 					int docId = r.nextInt(200);
-
-					docsAsShingleSets.put(docId,
-							new ArrayList<>(compareBook.asHashes(compareBook.asShingles(document, 3))));
+					docsAsShingleSets.put(docId, new ArrayList<>(compareBook.asHashes(compareBook.asShingles(document, 3))));
 				}
-
-				// out.print(line);
 			}
 
 			checkProcessed = false;
@@ -150,82 +143,53 @@ public class ServiceHandler extends HttpServlet {
 			inQueue.add(requestBookResult);
 
 			// Start the Thread
-			// Runnable work = new ServiceQueue(inQueue, outQueue, service);
-			// Runnable work = new ServiceQueue(inQueue, outQueue, service);
 			work = new ServiceQueue(inQueue, outQueue, service);
 			executor.execute(work);
 
 			jobNumber++;
 		} else {
-
 			if (outQueue.containsKey(taskNumber)) {
 
-				timerRefreshPage = 10000 * 12;
 				firstRefreshPage = false;
 
-				// get the Resultator object from outMap based on tasknumber
 				Validator outQItem = outQueue.get(taskNumber);
 
-				// System.out.println("\nChecking Status of Task No:" + taskNumber);
-
-				// Check out-queue for finished job with the given taskNumber
 				checkProcessed = outQItem.isProcessed();
 
-				// Check to see if the Resultator Item is Processed
 				if (checkProcessed == true) {
-					// Remove the processed item from Map by taskNumber
 					outQueue.remove(taskNumber);
-
-					// Get the Definitons of the Current Task
 					returningResult = outQItem.getResult();
 					resultSave = outQItem.getResultSave();
 
-					System.out.println("resultSave.: " + resultSave);
-
 					Collections.sort(returningResult, new BooksResults());
-
-					// ((ServiceQueue) work).stop();
 
 					for (BooksResults results : returningResult) {
 						System.out
 								.println("Result.: " + results.getValue() + "%   Book Name.: " + results.getBookName());
 					}
-
-					// System.out.println("Result.: " + returningResult );
-					// System.out.println("String " + keyWord + " - " + returningDefinitons);
 				}
 			}
 		}
 
 		// Output some headings at the top of the generated page
-
 		out.print("<div class=\"py-5 bg-dark text-white\">");
 		out.print("<div class=\"container\">");
 		out.print("<div class=\"row\">");
 		out.print("<div class=\"col-md-12\">");
 		out.print("<h1 class=\"display-3 text-center\">Measuring Document Similarity</h1>");
 		out.print("<h3 class=\"display-5 text-center\">Measuring Document: " + bookTitle + "</h3>");
-		// out.print("<h5 class=\"display-10 text-center\">Job#: " + taskNumber +
-		// "</h5>");
 		out.print("</div>");
 		out.print("</div>");
 		out.print("</div>");
 		out.print("</div>");
 
-		// We can also dynamically write out a form using hidden form fields. The form
-		// itself is not
-		// visible in the browser, but the JavaScript below can see it.
-		// out.print("<form name=\"frmRequestDetails\" action=\"poll\">");
 		out.print("<form name=\"frmRequestDetails\">");
-		// out.print("<form name=\"frmRequestDetails1\" action=\"poll\">");
 		out.print("<input name=\"txtTitle\" type=\"hidden\" value=\"" + bookTitle + "\">");
 		out.print("<input name=\"frmTaskNumber\" type=\"hidden\" value=\"" + taskNumber + "\">");
 		out.print("</form>");
 		out.print("</body>");
 		out.print("</html>");
 
-		// JavaScript to periodically poll the server for updates (this is ideal for an
-		// asynchronous operation)
 		if (firstRefreshPage) {
 			out.print("<script>");
 			out.print("var wait=setTimeout(\"document.frmRequestDetails.submit();\"," + timerRefreshPage + ");");
@@ -255,7 +219,7 @@ public class ServiceHandler extends HttpServlet {
 		out.print("});");
 		out.print("</script>");
 
-		// ************************* Start Page Bootstrap *****************************
+		
 		if (!firstRefreshPage) {
 			out.print("<div class=\"alert alert-success alert-dismissable\">");
 			out.print("<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>");
@@ -263,6 +227,7 @@ public class ServiceHandler extends HttpServlet {
 			out.print("</div>");
 		}
 
+		// ************************* Start Page Bootstrap *****************************
 		out.print("<div class=\"py-5\">");
 		out.print("<div class=\"container\">");
 		out.print("<div class=\"row\">");
@@ -287,31 +252,24 @@ public class ServiceHandler extends HttpServlet {
 			out.print("<div class=\"row\">");
 			out.print("<div class=\"col-md-12\">");
 			out.print("<div class=\"progress\">");
-
-			// Print the progress bar on screen
 			out.print(
 					"<div id=\"dynamic\" class=\"progress-bar progress-bar-striped\" role=\"progressbar\" style=\"width: "
 							+ 0 + "%\" aria-valuenow=\"50\" aria-valuemin=\"0\" aria-valuemax=\100\">" + 0 + "%</div>");
-
 			out.print("</div>");
 			out.print("</div>");
 			out.print("</div>");
 			out.print("</div>");
 			out.print("</div>");
 			// End print the progress bar on screen
-
 		}
 
+		// ************************* Start Chart *****************************
 		if (!firstRefreshPage) {
-
-			// ************************* Start Chart *****************************
 			out.print("<script src=\"http://www.chartjs.org/dist/2.7.1/Chart.bundle.js\">");
 			out.print("</script><style type=\"text/css\">");
-
 			out.print(
 					"@-webkit-keyframes chartjs-render-animation{from{opacity:0.99}to{opacity:1}}@keyframes chartjs-render-animation{from{opacity:0.99}to{opacity:1}}.chartjs-render-monitor{-webkit-animation:chartjs-render-animation 0.001s;animation:chartjs-render-animation 0.001s;}</style>");
 			out.print("<script src=\"http://www.chartjs.org/samples/latest/utils.js\"></script>");
-
 			out.print("<style>");
 			out.print("canvas {");
 			out.print("    -moz-user-select: none;");
@@ -320,7 +278,6 @@ public class ServiceHandler extends HttpServlet {
 			out.print("}");
 			out.print("</style>");
 
-			// out.print("<body data-gr-c-s-loaded=\"true\">");
 			out.print(
 					" <div id=\"container\" style=\"width: 95%;\"height: 95%;\"><div class=\"chartjs-size-monitor\" style=\"position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;\"><div class=\"chartjs-size-monitor-expand\" style=\"position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;\"><div style=\"position:absolute;width:1000000px;height:1000000px;left:0;top:0\"></div></div><div class=\"chartjs-size-monitor-shrink\" style=\"position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;\"><div style=\"position:absolute;width:200%;height:200%;left:0; top:0\"></div></div></div>");
 			out.print(
@@ -357,9 +314,7 @@ public class ServiceHandler extends HttpServlet {
 
 			out.print("]");
 			out.print("}]");
-
 			out.print("};");
-
 			out.print("window.onload = function() {");
 			out.print("var ctx = document.getElementById(\"canvas\").getContext(\"2d\");");
 			out.print("window.myBar = new Chart(ctx, {");
@@ -376,7 +331,6 @@ public class ServiceHandler extends HttpServlet {
 			out.print("}");
 			out.print("}");
 			out.print("});");
-
 			out.print("};");
 			out.print("</script>");
 			// ************************* End Chart *****************************
@@ -386,7 +340,6 @@ public class ServiceHandler extends HttpServlet {
 			out.print("<div class=\"row\">");
 			out.print("<div class=\"col-md-6\">");
 			out.print("<div class=\"card\">");
-
 			out.print("<div class=\"card-header\">" + "200 lines of document: " + bookTitle + "</div>");
 			out.print("<div class=\"card-body h-75\">");
 
@@ -394,14 +347,12 @@ public class ServiceHandler extends HttpServlet {
 			for (int i = 0; i < 200; i++) {
 				sampleBook += initialBook.get(i);
 			}
-
 			initialBook.clear();
 
 			out.print(
-					"<textarea readonly class=\"form-control noresize\" id=\"text\" name=\"text\" rows=\"24\" style=\"min-width: 100%\" style=\"min-height: 100%\">");
+					"<textarea readonly class=\"form-control noresize\" id=\"text\" name=\"text\" rows=\"25\" style=\"min-width: 100%\" style=\"min-height: 100%\">");
 			out.print(sampleBook);
 			out.print("</textarea>");
-
 			out.print("</div>");
 			out.print("</div>");
 			out.print("</div>");
@@ -416,11 +367,10 @@ public class ServiceHandler extends HttpServlet {
 			out.print("</thead>");
 			out.print("<tbody>");
 
-			// Collections.sort(returningResult, new BooksResults());
-
 			count = 0;
 			for (BooksResults results : returningResult) {
 				count++;
+
 				out.print("<tr>");
 				out.print("<td>" + count + "</td>");
 				out.print("<td>" + results.getValue() + "%" + "</td>");
@@ -437,22 +387,19 @@ public class ServiceHandler extends HttpServlet {
 			out.print("</div>");
 			out.print("</div>");
 			out.print("</div>");
-
 		}
 
 		out.print("<div class=\"py-5 bg-dark text-white\">");
 		out.print("<div class=\"container\">");
 		out.print("<div class=\"row\">");
 		out.print("<div class=\"col-md-12\">");
-		out.print("<h6 class=\"display-10 text-center\">Alexander Souza - G00317835</h6>");
+		out.print("<h6 class=\"display-15 text-center\">Alexander Souza - G00317835</h6>");
 		out.print("<h6 class=\"display-15 text-center\">Job#: " + taskNumber + "</h6>");
 		out.print("</div>");
 		out.print("</div>");
 		out.print("</div>");
 		out.print("</div>");
-
 		// ************************* End Page Bootstrap *****************************
-
 	}
 
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
