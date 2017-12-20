@@ -90,32 +90,7 @@ public class CompareBook implements Serializable{
 		return rst ^ random;
 	}
 
-//	static Books computeShingles(String bookName, Stream<String> dataFileStream) throws IOException {
-//
-//		Map<Integer, List<Integer>> docsAsShingleSets = new HashMap<>();
-//		Random r = new Random();
-//
-//		dataFileStream.forEach(line -> {
-//			String[] words = line.split("\\s");
-//
-//			for (int i = 0; i < words.length; i++) {
-//				words[i] = words[i].toUpperCase();
-//			}
-//
-//			assert words.length > 2;
-//
-//			if (words.length > 2) {
-//				final String[] document = getDocument(words);
-//
-//				int docId = r.nextInt(200);
-//				docsAsShingleSets.put(docId, new ArrayList<>(asHashes(asShingles(document, 3))));
-//			}
-//		});
-//
-//		Books book = new Books(bookName, docsAsShingleSets);
-//
-//		return book;
-//	}
+
 
 	public List<List<String>> asShingles(final String[] document, final int length) {
 		List<List<String>> shinglesInDoc = new ArrayList<>();

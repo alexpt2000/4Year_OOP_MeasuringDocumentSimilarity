@@ -1,5 +1,6 @@
 package ie.gmit.sw;
 
+import java.io.PrintWriter;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class BookServiceImpl extends UnicastRemoteObject implements BookService 
 	
 
 	public Validator campareBooks(Books book) throws RemoteException {
+		
 		ArrayList<BooksResults> sendResultToPage = new ArrayList<BooksResults>();
 		boolean existBook = false;
 		int resultSililary = 0;
@@ -46,9 +48,12 @@ public class BookServiceImpl extends UnicastRemoteObject implements BookService 
 		}
 		
 		if (existBook) {
-			System.out.println("This book exist on database.");
+			System.out.println("The document already exist on database");
+			resultDefinition.setResultSave("The document already exist on database");
 		} else {
-			System.out.println("The book " + book.getBookName() + " will be save on database.");
+			System.out.println("The document " + book.getBookName() + " will be save on database.");
+			resultDefinition.setResultSave("The document " + book.getBookName() + " will be save on database.");
+			
 			saveBook.addBookssToDatabase(book);
 		}
 

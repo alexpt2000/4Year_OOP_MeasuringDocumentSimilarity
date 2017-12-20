@@ -34,16 +34,7 @@ import javax.servlet.annotation.*;
 		maxRequestSize = 1024 * 1024 * 50) // 50MB. he maximum size allowed for a multipart/form-data request, in bytes.
 
 public class ServiceHandler extends HttpServlet {
-	/*
-	 * Declare any shared objects here. For example any of the following can be
-	 * handled from this context by instantiating them at a servlet level: 1) An
-	 * Asynchronous Message Facade: declare the IN and OUT queues or MessageQueue 2)
-	 * An Chain of Responsibility: declare the initial handler or a full chain
-	 * object 1) A Proxy: Declare a shared proxy here and a request proxy inside
-	 * doGet()
-	 */
-	private String environmentalVariable = null; // Demo purposes only. Rename this variable to something more
-													// appropriate
+
 	private static long jobNumber = 0;
 	private final int POOL_SIZE = 6;
 	private int timerRefreshPage = 10000;
@@ -57,7 +48,6 @@ public class ServiceHandler extends HttpServlet {
 	private boolean firstRefreshPage = true;
 	private boolean checkProcessed;
 	private ArrayList<BooksResults> returningResult;
-	private boolean firstTime = true;
 
 	private Runnable work = new ServiceQueue();
 
@@ -70,11 +60,7 @@ public class ServiceHandler extends HttpServlet {
 	 */
 	public void init() throws ServletException {
 		ServletContext ctx = getServletContext(); // The servlet context is the application itself.
-
-		// Reads the value from the <context-param> in web.xml. Any application scope
-		// variables
-		// defined in the web.xml can be read in as follows:
-		environmentalVariable = ctx.getInitParameter("SOME_GLOBAL_OR_ENVIRONMENTAL_VARIABLE");
+		ctx.getInitParameter("SOME_GLOBAL_OR_ENVIRONMENTAL_VARIABLE");
 
 		outQueue = new HashMap<String, Validator>();
 		inQueue = new LinkedBlockingQueue<Books>();
@@ -94,8 +80,8 @@ public class ServiceHandler extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
 		BookService service = new BookServiceImpl();
-
 		CompareBook compareBook = new CompareBook();
+		String resultSave = "";
 		int count = 0;
 
 		// Step 1) Write out the MIME type
@@ -130,8 +116,6 @@ public class ServiceHandler extends HttpServlet {
 
 			Part part = req.getPart("txtDocument");
 
-			timerRefreshPage = 10000;
-			firstRefreshPage = true;
 
 			BufferedReader br = new BufferedReader(new InputStreamReader(part.getInputStream()));
 			String line = null;
@@ -194,6 +178,10 @@ public class ServiceHandler extends HttpServlet {
 
 					// Get the Definitons of the Current Task
 					returningResult = outQItem.getResult();
+					resultSave = outQItem.getResultSave();
+
+					System.out.println("resultSave.: " + resultSave);
+
 					Collections.sort(returningResult, new BooksResults());
 
 					// ((ServiceQueue) work).stop();
@@ -238,14 +226,11 @@ public class ServiceHandler extends HttpServlet {
 
 		// JavaScript to periodically poll the server for updates (this is ideal for an
 		// asynchronous operation)
-		out.print("<script>");
-		out.print("var wait=setTimeout(\"document.frmRequestDetails.submit();\"," + timerRefreshPage + ");"); // Refresh
-																												// every
-																												// 10
-																												// seconds
-		// out.print("var wait=setTimeout(\"document.frmRequestDetails1.submit();\",
-		// 10000);"); //Refresh every 10 seconds
-		out.print("</script>");
+		if (firstRefreshPage) {
+			out.print("<script>");
+			out.print("var wait=setTimeout(\"document.frmRequestDetails.submit();\"," + timerRefreshPage + ");");
+			out.print("</script>");
+		}
 
 		out.print(
 				"<script src=\"https://code.jquery.com/jquery-3.2.1.slim.min.js\" integrity=\"sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN\" crossorigin=\"anonymous\"></script>");
@@ -271,11 +256,19 @@ public class ServiceHandler extends HttpServlet {
 		out.print("</script>");
 
 		// ************************* Start Page Bootstrap *****************************
+		if (!firstRefreshPage) {
+			out.print("<div class=\"alert alert-success alert-dismissable\">");
+			out.print("<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>");
+			out.print(resultSave);
+			out.print("</div>");
+		}
+
 		out.print("<div class=\"py-5\">");
 		out.print("<div class=\"container\">");
 		out.print("<div class=\"row\">");
 		out.print("<div class=\"col-md-12\">");
-		out.print("<p class=\"\">Paragraph. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>");
+		out.print(
+				"<p class=\"\">Document similarity (or distance between documents) is a one of the central themes in Information Retrieval. How humans usually define how similar are documents? Usually documents treated as similar if they are semantically close and describe similar concepts. On other hand “similarity” can be used in context of duplicate detection. We will review several common approaches..</p>");
 		out.print("</div>");
 		out.print("</div>");
 		out.print("<div class=\"row\">");
@@ -306,6 +299,7 @@ public class ServiceHandler extends HttpServlet {
 			out.print("</div>");
 			out.print("</div>");
 			// End print the progress bar on screen
+
 		}
 
 		if (!firstRefreshPage) {
@@ -339,8 +333,9 @@ public class ServiceHandler extends HttpServlet {
 
 			count = 0;
 			for (BooksResults results : returningResult) {
+				count++;
 				out.print("\"" + results.getBookName() + "\",");
-				if(count == 10)
+				if (count == 10)
 					break;
 			}
 
@@ -354,8 +349,9 @@ public class ServiceHandler extends HttpServlet {
 
 			count = 0;
 			for (BooksResults results : returningResult) {
+				count++;
 				out.print(results.getValue() + ",");
-				if(count == 10)
+				if (count == 10)
 					break;
 			}
 
@@ -402,7 +398,7 @@ public class ServiceHandler extends HttpServlet {
 			initialBook.clear();
 
 			out.print(
-					"<textarea readonly class=\"form-control noresize\" id=\"text\" name=\"text\" rows=\"27\" style=\"min-width: 100%\" style=\"min-height: 100%\">");
+					"<textarea readonly class=\"form-control noresize\" id=\"text\" name=\"text\" rows=\"24\" style=\"min-width: 100%\" style=\"min-height: 100%\">");
 			out.print(sampleBook);
 			out.print("</textarea>");
 
@@ -420,7 +416,7 @@ public class ServiceHandler extends HttpServlet {
 			out.print("</thead>");
 			out.print("<tbody>");
 
-			//Collections.sort(returningResult, new BooksResults());
+			// Collections.sort(returningResult, new BooksResults());
 
 			count = 0;
 			for (BooksResults results : returningResult) {
@@ -430,8 +426,8 @@ public class ServiceHandler extends HttpServlet {
 				out.print("<td>" + results.getValue() + "%" + "</td>");
 				out.print("<td>" + results.getBookName() + "</td>");
 				out.print("</tr>");
-				
-				if(count == 20)
+
+				if (count == 20)
 					break;
 			}
 

@@ -9,6 +9,10 @@ public interface Validator extends Remote {
 	public ArrayList<BooksResults> getResult() throws RemoteException;
 
 	public void setResult(ArrayList<BooksResults> result) throws RemoteException;
+	
+	public String getResultSave() throws RemoteException;
+
+	public void setResultSave(String result) throws RemoteException;
 
 	public boolean isProcessed() throws RemoteException;
 
