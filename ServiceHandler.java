@@ -103,11 +103,7 @@ public class ServiceHandler extends HttpServlet {
 		//The following string should be extracted as a context from web.xml 
 		out.print("<html><head><title>A JEE Application for Measuring Document Similarity</title>");
 		
-		out.print("<meta charset=\"utf-8\">");
-		out.print("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
-		out.print("<link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css\" type=\"text/css\">");
-		out.print("<link rel=\"stylesheet\" href=\"https://v40.pingendo.com/assets/bootstrap/bootstrap-4.0.0-beta.1.css\" type=\"text/css\"> ");
-
+		
 		out.print("</head>");		
 		out.print("<body>");
 		
@@ -128,7 +124,7 @@ public class ServiceHandler extends HttpServlet {
 				count++;
 				String[] words = line.split("\\s");
 				
-				initialBook.add(line);
+				initialBook.add(count + " - " + line + "<br>");
 
 				for (int i = 0; i < words.length; i++) {
 					words[i] = words[i].toUpperCase();
@@ -193,18 +189,11 @@ public class ServiceHandler extends HttpServlet {
 		}
 		
 		//Output some headings at the top of the generated page
-	
-		out.print("<div class=\"py-5 bg-dark text-white\">");
-		out.print("<div class=\"container\">");
-		out.print("<div class=\"row\">");
-		out.print("<div class=\"col-md-12\">");
-		out.print("<h1 class=\"display-3 text-center\">Measuring Document Similarity</h1>");
-		out.print("<h3 class=\"display-5 text-center\">Doc.: " + bookTitle + "</h3>");
-		out.print("<h5 class=\"display-10 text-center\">Job#: " + taskNumber + "</h5>");
-		out.print("</div>");
-		out.print("</div>");
-		out.print("</div>");
-		out.print("</div>");
+		out.print("<H1>Processing request for Job#: " + taskNumber + "</H1>");
+		out.print("<H3>Document Title: " + bookTitle + "</H3>");
+		
+		
+		//Output some useful information for you (yes YOU!)
 	
 
 		
@@ -226,113 +215,7 @@ public class ServiceHandler extends HttpServlet {
 		out.print("</script>");
 		
 
-		out.print("<script src=\"https://code.jquery.com/jquery-3.2.1.slim.min.js\" integrity=\"sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN\" crossorigin=\"anonymous\"></script>");
-		out.print("<script src=\"https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js\" integrity=\"sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh\" crossorigin=\"anonymous\"></script>");
-		out.print("<script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js\" integrity=\"sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1\" crossorigin=\"anonymous\"></script>");
-
 	
-		
-		
-		
-		// ************************* Start Page Bootstrap *****************************
-		out.print("<div class=\"py-5\">");
-	    out.print("<div class=\"container\">");
-	      out.print("<div class=\"row\">");
-	        out.print("<div class=\"col-md-12\">");
-	          out.print("<p class=\"\">Paragraph. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>");
-	        out.print("</div>");
-	      out.print("</div>");
-	      out.print("<div class=\"row\">");
-	        out.print("<div class=\"col-md-12 text-center\">");
-	          out.print("<a class=\"btn btn-primary text-center\" href=\"\">Verificar outra similaridade de Documento</a>");
-	        out.print("</div>");
-	      out.print("</div>");
-	    out.print("</div>");
-	  out.print("</div>");
-	  out.print("<div class=\"py-5\">");
-	    out.print("<div class=\"container\">");
-	      out.print("<div class=\"row\">");
-	        out.print("<div class=\"col-md-12\">");
-	          out.print("<div class=\"progress\">");
-	            out.print("<div class=\"progress-bar progress-bar-striped\" role=\"progressbar\" style=\"width: 80%\" aria-valuenow=\"50\" aria-valuemin=\"0\" aria-valuemax=\100\">80%</div>");
-	          out.print("</div>");
-	        out.print("</div>");
-	      out.print("</div>");
-	    out.print("</div>");
-	  out.print("</div>");
-	  out.print("<div class=\"py-5\">");
-	    out.print("<div class=\"container\">");
-	      out.print("<div class=\"row\">");
-	        out.print("<div class=\"col-md-6\">");
-	          out.print("<div class=\"card\">");
-	          
-	          
-	            out.print("<div class=\"card-header\">" + "Document: " + bookTitle + "</div>");
-	            out.print("<div class=\"card-body\">");
-	            
-	            String sampleBook = "";
-	    		for (int i = 0; i < 20; i++) {
-	    			sampleBook += initialBook.get(i) + "<br>"; 
-	    		}
-   
-            
-	              out.print("<p class=\" p-y-1\">" + sampleBook + "</p>");
-	            out.print("</div>");
-	          out.print("</div>");
-	        out.print("</div>");
-	        out.print("<div class=\"col-md-6\">");
-	          out.print("<table class=\"table\">");
-	            out.print("<thead>");
-	              out.print("<tr>");
-	                out.print("<th>#</th>");
-	                out.print("<th>Similarity %</th>");
-	                out.print("<th>Document Names</th>");
-	              out.print("</tr>");
-	            out.print("</thead>");
-	            out.print("<tbody>");
-
-	            int count = 0;
-	    		for (BooksResults results : returningResult) {
-	    			count++;
-		            out.print("<tr>");             
-	                out.print("<td>" + count + "</td>");
-	                out.print("<td>" + results.getValue() + "%" + "</td>");
-	                out.print("<td>" + results.getBookName() + "</td>");
-	                out.print("</tr>");
-	    		}            
-	            
-	            
-//	              out.print("<tr>");             
-//	                out.print("<td>1</td>");
-//	                out.print("<td>Mark</td>");
-//	                out.print("<td>Otto</td>");
-//	              out.print("</tr>");
-//	              
-//	              out.print("<tr>");
-//	                out.print("<td>2</td>");
-//	                out.print("<td>Jacob</td>");
-//	                out.print("<td>Thornton</td>");
-//	              out.print("</tr>");
-//	              
-//	              out.print("<tr>");
-//	                out.print("<td>3</td>");
-//	                out.print("<td>Larry</td>");
-//	                out.print("<td>the Bird</td>");
-//	              out.print("</tr>");
-	              
-	            out.print("</tbody>");
-	          out.print("</table>");
-	        out.print("</div>");
-	      out.print("</div>");
-	    out.print("</div>");
-	  out.print("</div>");
-	// ************************* End Page Bootstrap *****************************
-		
-		
-		
-		
-		
-		
 		// ************************* Start Chart *****************************
 		out.print("<script src=\"http://www.chartjs.org/dist/2.7.1/Chart.bundle.js\">");
 		out.print("</script><style type=\"text/css\">");
@@ -401,6 +284,19 @@ public class ServiceHandler extends HttpServlet {
 
 		
 
+		out.print("<h3>Uploaded Document</h3>");	
+		out.print("<font color=\"0000ff\">");	
+
+		for (int i = 0; i < 15; i++) {
+		out.print(initialBook.get(i)); 
+		}
+		out.print("</font>");
+		
+		
+		
+		
+		
+		
 		
 		
 		
