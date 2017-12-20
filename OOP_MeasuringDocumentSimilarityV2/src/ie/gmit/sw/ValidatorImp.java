@@ -33,17 +33,14 @@ public class ValidatorImp extends UnicastRemoteObject implements Validator {
 		this.processed = processed;
 	}
 
-	
 	public String getResultSave() throws RemoteException {
 
 		return resultSave;
 	}
 
-	
 	public void setResultSave(String resultSave) throws RemoteException {
 		this.resultSave = resultSave;
-		
-	}
 
+	}
 
 }

@@ -25,10 +25,21 @@ import com.sun.istack.internal.NotNull;
 import xtea_db4o.XTEA;
 import xtea_db4o.XTeaEncryptionStorage;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class BooksDB.
+ */
 public class BooksDB {
+	
+	/** The db. */
 	private ObjectContainer db = null;
+	
+	/** The container DB. */
 	private ObjectContainer containerDB = null;
 
+	/**
+	 * Instantiates a new books DB.
+	 */
 	public BooksDB() {
 
 		EmbeddedConfiguration config = Db4oEmbedded.newConfiguration();
@@ -44,21 +55,22 @@ public class BooksDB {
 		// Open a local database. Use Db4o.openServer(config, server, port) for full
 		// client / server
 		try {
+			//db = Db4oEmbedded.openFile(config, "C:/books/books.data");
 			db = Db4oEmbedded.openFile(config, "C:/books/books.data");
 		} catch (Db4oIOException e) {
-			// e.printStackTrace();
 		} catch (DatabaseFileLockedException e) {
-			// e.printStackTrace();
 		} catch (IncompatibleFileFormatException e) {
-			// e.printStackTrace();
 		} catch (OldFormatException e) {
-			// e.printStackTrace();
 		} catch (DatabaseReadOnlyException e) {
-			// e.printStackTrace();
 		}
 
 	}
 
+	/**
+	 * Adds the bookss to database.
+	 *
+	 * @param book the book
+	 */
 	/*
 	 * Once we get a handle on an ObjectContainer, we are working in a transactional
 	 * environment. Adding objects to our database merely requires calling
@@ -75,59 +87,17 @@ public class BooksDB {
 		}
 	}
 
-	public void showAllBooks() {
-		// An ObjectSet is a specialised List for storing results
-		ObjectSet<Books> books = db.query(Books.class);
-		for (Books book : books) {
-			out.println("[Books] " + book.getBookName() + "\t ***Database ObjID: " + db.ext().getID(book));
-
-			// Removing objects from the database is as easy as adding them
-			// db.delete(customer);
-			db.commit();
-		}
-	}
-
+	/**
+	 * Load all books.
+	 *
+	 * @return the list
+	 */
 	public List<Books> loadAllBooks() {
-		ObjectSet<Books> books;
-
-		containerDB = db.ext().openSession();
-
-		books = containerDB.query(Books.class);
-
 		// An ObjectSet is a specialised List for storing results
-
+		ObjectSet<Books> books;
+		containerDB = db.ext().openSession();
+		books = containerDB.query(Books.class);
 		return books;
 	}
 
-	// ****************** Best ************************
-	public void getBooksNative(final Books b) {
-		ObjectSet<Books> result = db.query(new Predicate<Books>() {
-			private static final long serialVersionUID = 777L;
-
-			public boolean match(Books book) {
-				return book.getBookName().equals(b.getBookName());
-			}
-		});
-
-		if (result.hasNext()) {
-			out.println("[getBooksNative] found " + b.getBookName());
-
-			for (Books books : result) {
-
-				for (Map.Entry<Integer, List<Integer>> me : books.getBookHash().entrySet()) {
-					int key = me.getKey();
-					List<Integer> valueList = me.getValue();
-
-					System.out.println("Key: " + key + " = ");
-
-					for (Integer s : valueList) {
-						System.out.print(" " + s);
-					}
-				}
-				// System.out.println("Value .: " + books.getBookHash().entrySet());
-			}
-		} else {
-			out.println("[Error] " + b.getBookName() + " is not in the database");
-		}
-	}
 }
