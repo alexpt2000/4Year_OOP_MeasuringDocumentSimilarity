@@ -4,10 +4,12 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Timer;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -41,6 +43,7 @@ public class ServiceHandler extends HttpServlet {
 	private String environmentalVariable = null; //Demo purposes only. Rename this variable to something more appropriate
 	private static long jobNumber = 0;
 	private final int POOL_SIZE = 6;
+	private int timerRefreshPage = 10000;
 
 	private static Map<String, Validator> outQueue;
 	private static BlockingQueue<Books> inQueue;
@@ -48,8 +51,9 @@ public class ServiceHandler extends HttpServlet {
 	private Map<Integer, List<Integer>> docsAsShingleSets = new HashMap<>();
 	private List<String> initialBook = new ArrayList<>();
 
+	private boolean firstRefreshPage = true;
 	private boolean checkProcessed;
-	private List<BooksResults> returningResult;
+	private ArrayList<BooksResults> returningResult;
 	private boolean firstTime = true;
 	private Part part;
 	private Runnable work = new ServiceQueue();
@@ -108,6 +112,7 @@ public class ServiceHandler extends HttpServlet {
 		out.print("<link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css\" type=\"text/css\">");
 		out.print("<link rel=\"stylesheet\" href=\"https://v40.pingendo.com/assets/bootstrap/bootstrap-4.0.0-beta.1.css\" type=\"text/css\"> ");
 
+		
 		out.print("</head>");		
 		out.print("<body>");
 		
@@ -117,6 +122,9 @@ public class ServiceHandler extends HttpServlet {
 			taskNumber = new String("T" + jobNumber);
 			
 			part = req.getPart("txtDocument");
+			
+			timerRefreshPage = 10000;
+			firstRefreshPage = true;
 			
 			BufferedReader br = new BufferedReader(new InputStreamReader(part.getInputStream()));
 			String line = null;
@@ -163,6 +171,9 @@ public class ServiceHandler extends HttpServlet {
 		} else {
 
 			if (outQueue.containsKey(taskNumber)) {
+				
+				timerRefreshPage = 10000*12;
+				firstRefreshPage = false;
 
 				// get the Resultator object from outMap based on tasknumber
 				Validator outQItem = outQueue.get(taskNumber);
@@ -200,7 +211,7 @@ public class ServiceHandler extends HttpServlet {
 		out.print("<div class=\"col-md-12\">");
 		out.print("<h1 class=\"display-3 text-center\">Measuring Document Similarity</h1>");
 		out.print("<h3 class=\"display-5 text-center\">Doc.: " + bookTitle + "</h3>");
-		out.print("<h5 class=\"display-10 text-center\">Job#: " + taskNumber + "</h5>");
+		//out.print("<h5 class=\"display-10 text-center\">Job#: " + taskNumber + "</h5>");
 		out.print("</div>");
 		out.print("</div>");
 		out.print("</div>");
@@ -221,7 +232,7 @@ public class ServiceHandler extends HttpServlet {
 		
 		//JavaScript to periodically poll the server for updates (this is ideal for an asynchronous operation)
 		out.print("<script>");
-		out.print("var wait=setTimeout(\"document.frmRequestDetails.submit();\", 10000);"); //Refresh every 10 seconds
+		out.print("var wait=setTimeout(\"document.frmRequestDetails.submit();\"," + timerRefreshPage + ");"); //Refresh every 10 seconds
 		//out.print("var wait=setTimeout(\"document.frmRequestDetails1.submit();\", 10000);"); //Refresh every 10 seconds
 		out.print("</script>");
 		
@@ -230,8 +241,24 @@ public class ServiceHandler extends HttpServlet {
 		out.print("<script src=\"https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js\" integrity=\"sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh\" crossorigin=\"anonymous\"></script>");
 		out.print("<script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js\" integrity=\"sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1\" crossorigin=\"anonymous\"></script>");
 
-	
+		// Script Time for progress bar
+		out.print("<script>");
+		out.print("$(function() {");
+		out.print("var current_progress = 0;");
+		out.print("var interval = setInterval(function() {");
+		out.print("current_progress += 1;");
+		out.print("$(\"#dynamic\")");
+		out.print(".css(\"width\", current_progress + \"%\")");
+		out.print(".attr(\"aria-valuenow\", current_progress)");
+		out.print(".text(current_progress + \"% Complete\");");
+		out.print("if (current_progress >= 100)");
+		out.print("clearInterval(interval);");
+		out.print("}, 100);");
+		out.print("});");
+		out.print("</script>");
 		
+		
+
 		
 		
 		// ************************* Start Page Bootstrap *****************************
@@ -244,22 +271,102 @@ public class ServiceHandler extends HttpServlet {
 	      out.print("</div>");
 	      out.print("<div class=\"row\">");
 	        out.print("<div class=\"col-md-12 text-center\">");
-	          out.print("<a class=\"btn btn-primary text-center\" href=\"\">Verificar outra similaridade de Documento</a>");
+	          out.print("<a class=\"btn btn-primary text-center\" href=\"index.jsp\">Verificar outra similaridade de Documento</a>");
 	        out.print("</div>");
 	      out.print("</div>");
 	    out.print("</div>");
 	  out.print("</div>");
+	  
+	  if (firstRefreshPage) {
+	  // Print the progress bar on screen
 	  out.print("<div class=\"py-5\">");
 	    out.print("<div class=\"container\">");
 	      out.print("<div class=\"row\">");
 	        out.print("<div class=\"col-md-12\">");
 	          out.print("<div class=\"progress\">");
-	            out.print("<div class=\"progress-bar progress-bar-striped\" role=\"progressbar\" style=\"width: 80%\" aria-valuenow=\"50\" aria-valuemin=\"0\" aria-valuemax=\100\">80%</div>");
+	          
+	          // Print the progress bar on screen
+	  	      out.print("<div id=\"dynamic\" class=\"progress-bar progress-bar-striped\" role=\"progressbar\" style=\"width: " + 0 + "%\" aria-valuenow=\"50\" aria-valuemin=\"0\" aria-valuemax=\100\">" + 0 + "%</div>");
+
 	          out.print("</div>");
 	        out.print("</div>");
 	      out.print("</div>");
 	    out.print("</div>");
 	  out.print("</div>");
+	  // End print the progress bar on screen
+	  }
+	  
+	  if (!firstRefreshPage) {
+	    	  
+	      	// ************************* Start Chart *****************************
+	      		out.print("<script src=\"http://www.chartjs.org/dist/2.7.1/Chart.bundle.js\">");
+	      		out.print("</script><style type=\"text/css\">");
+	      		
+	      		out.print("@-webkit-keyframes chartjs-render-animation{from{opacity:0.99}to{opacity:1}}@keyframes chartjs-render-animation{from{opacity:0.99}to{opacity:1}}.chartjs-render-monitor{-webkit-animation:chartjs-render-animation 0.001s;animation:chartjs-render-animation 0.001s;}</style>");
+	      		out.print("<script src=\"http://www.chartjs.org/samples/latest/utils.js\"></script>");
+	      		
+	      		out.print("<style>");
+	      		out.print("canvas {");
+	      		out.print("    -moz-user-select: none;");
+	      		out.print("    -webkit-user-select: none;");
+	      		out.print("    -ms-user-select: none;");
+	      		out.print("}");
+	      		out.print("</style>");
+	      		
+	      		//out.print("<body data-gr-c-s-loaded=\"true\">");
+	      		out.print(" <div id=\"container\" style=\"width: 95%;\"height: 95%;\"><div class=\"chartjs-size-monitor\" style=\"position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;\"><div class=\"chartjs-size-monitor-expand\" style=\"position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;\"><div style=\"position:absolute;width:1000000px;height:1000000px;left:0;top:0\"></div></div><div class=\"chartjs-size-monitor-shrink\" style=\"position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;\"><div style=\"position:absolute;width:200%;height:200%;left:0; top:0\"></div></div></div>");
+	      		out.print("<canvas id=\"canvas\" width=\"1062\" height=\"531\" class=\"chartjs-render-monitor\" style=\"display: block; width: 1062px; height: 531px;\"></canvas>");
+	      		out.print("</div>");
+	      		out.print("<script>");
+	      		out.print("var color = Chart.helpers.color;");
+	      		out.print("var barChartData = {");
+	      		out.print("labels: [");
+	      		
+	      		for (BooksResults results : returningResult) {
+	      			out.print("\"" +  results.getBookName() + "\",");
+	      		}
+	      		
+	      		out.print(" ],");
+	      		out.print("datasets: [{");
+	      		out.print(" label: '"+bookTitle+"',");
+	      		out.print("backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),");
+	      		out.print(" borderColor: window.chartColors.red,");
+	      		out.print("borderWidth: 1,");
+	      		out.print("data: [");
+	      		
+	      		for (BooksResults results : returningResult) {
+	      			out.print(results.getValue() + ",");
+	      		}
+
+	      		out.print("]");
+	      		out.print("}]");
+	      		
+	      		out.print("};");
+	      		
+	      		out.print("window.onload = function() {");
+	      		out.print("var ctx = document.getElementById(\"canvas\").getContext(\"2d\");");
+	      		out.print("window.myBar = new Chart(ctx, {");
+	      		out.print("type: 'bar',");
+	      		out.print("data: barChartData,");
+	      		out.print("options: {");
+	      		out.print("responsive: true,");
+	      		out.print("legend: {");
+	      		out.print("position: 'top',");
+	      		out.print("},");
+	      		out.print("title: {");
+	      		out.print("display: true,");
+	      		out.print("text: 'Compare'");
+	      		out.print("}");
+	      		out.print("}");
+	      		out.print("});");
+	      		
+	      		out.print("};");
+	      		out.print("</script>");
+	      		// ************************* End Chart *****************************
+
+
+	  
+	  
 	  out.print("<div class=\"py-5\">");
 	    out.print("<div class=\"container\">");
 	      out.print("<div class=\"row\">");
@@ -267,16 +374,21 @@ public class ServiceHandler extends HttpServlet {
 	          out.print("<div class=\"card\">");
 	          
 	          
-	            out.print("<div class=\"card-header\">" + "Document: " + bookTitle + "</div>");
-	            out.print("<div class=\"card-body\">");
+	            out.print("<div class=\"card-header\">" + "200 lines of document: " + bookTitle + "</div>");
+	            out.print("<div class=\"card-body h-75\">");
 	            
 	            String sampleBook = "";
-	    		for (int i = 0; i < 20; i++) {
-	    			sampleBook += initialBook.get(i) + "<br>"; 
+	    		for (int i = 0; i < 200; i++) {
+	    			sampleBook += initialBook.get(i); 
 	    		}
    
+
             
-	              out.print("<p class=\" p-y-1\">" + sampleBook + "</p>");
+	    		out.print("<textarea readonly class=\"form-control noresize\" id=\"text\" name=\"text\" rows=\"27\" style=\"min-width: 100%\" style=\"min-height: 100%\">");
+	    		out.print(sampleBook);
+	    		out.print("</textarea>");
+	              
+	              
 	            out.print("</div>");
 	          out.print("</div>");
 	        out.print("</div>");
@@ -291,6 +403,9 @@ public class ServiceHandler extends HttpServlet {
 	            out.print("</thead>");
 	            out.print("<tbody>");
 
+	            
+	            Collections.sort(returningResult, new BooksResults());
+	            
 	            int count = 0;
 	    		for (BooksResults results : returningResult) {
 	    			count++;
@@ -301,24 +416,7 @@ public class ServiceHandler extends HttpServlet {
 	                out.print("</tr>");
 	    		}            
 	            
-	            
-//	              out.print("<tr>");             
-//	                out.print("<td>1</td>");
-//	                out.print("<td>Mark</td>");
-//	                out.print("<td>Otto</td>");
-//	              out.print("</tr>");
-//	              
-//	              out.print("<tr>");
-//	                out.print("<td>2</td>");
-//	                out.print("<td>Jacob</td>");
-//	                out.print("<td>Thornton</td>");
-//	              out.print("</tr>");
-//	              
-//	              out.print("<tr>");
-//	                out.print("<td>3</td>");
-//	                out.print("<td>Larry</td>");
-//	                out.print("<td>the Bird</td>");
-//	              out.print("</tr>");
+
 	              
 	            out.print("</tbody>");
 	          out.print("</table>");
@@ -326,79 +424,31 @@ public class ServiceHandler extends HttpServlet {
 	      out.print("</div>");
 	    out.print("</div>");
 	  out.print("</div>");
+	  
+	  }
+	  
+		out.print("<div class=\"py-5 bg-dark text-white\">");
+		out.print("<div class=\"container\">");
+		out.print("<div class=\"row\">");
+		out.print("<div class=\"col-md-12\">");
+		out.print("<h6 class=\"display-10 text-center\">Alexander Souza - G00317835</h6>");
+		out.print("<h6 class=\"display-15 text-center\">Job#: " + taskNumber + "</h6>");
+		out.print("</div>");
+		out.print("</div>");
+		out.print("</div>");
+		out.print("</div>");
+	  
+	  
 	// ************************* End Page Bootstrap *****************************
 		
 		
 		
 		
-		
-		
-		// ************************* Start Chart *****************************
-		out.print("<script src=\"http://www.chartjs.org/dist/2.7.1/Chart.bundle.js\">");
-		out.print("</script><style type=\"text/css\">");
-		
-		out.print("@-webkit-keyframes chartjs-render-animation{from{opacity:0.99}to{opacity:1}}@keyframes chartjs-render-animation{from{opacity:0.99}to{opacity:1}}.chartjs-render-monitor{-webkit-animation:chartjs-render-animation 0.001s;animation:chartjs-render-animation 0.001s;}</style>");
-		out.print("<script src=\"http://www.chartjs.org/samples/latest/utils.js\"></script>");
-		
-		out.print("<style>");
-		out.print("canvas {");
-		out.print("    -moz-user-select: none;");
-		out.print("    -webkit-user-select: none;");
-		out.print("    -ms-user-select: none;");
-		out.print("}");
-		out.print("</style>");
-		
-		//out.print("<body data-gr-c-s-loaded=\"true\">");
-		out.print(" <div id=\"container\" style=\"width: 75%;\"><div class=\"chartjs-size-monitor\" style=\"position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;\"><div class=\"chartjs-size-monitor-expand\" style=\"position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;\"><div style=\"position:absolute;width:1000000px;height:1000000px;left:0;top:0\"></div></div><div class=\"chartjs-size-monitor-shrink\" style=\"position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;\"><div style=\"position:absolute;width:200%;height:200%;left:0; top:0\"></div></div></div>");
-		out.print("<canvas id=\"canvas\" width=\"1062\" height=\"531\" class=\"chartjs-render-monitor\" style=\"display: block; width: 1062px; height: 531px;\"></canvas>");
-		out.print("</div>");
-		out.print("<script>");
-		out.print("var color = Chart.helpers.color;");
-		out.print("var barChartData = {");
-		out.print("labels: [");
-		
-		for (BooksResults results : returningResult) {
-			out.print("\"" +  results.getBookName() + "\",");
-		}
-		
-		out.print(" ],");
-		out.print("datasets: [{");
-		out.print(" label: '"+bookTitle+"',");
-		out.print("backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),");
-		out.print(" borderColor: window.chartColors.red,");
-		out.print("borderWidth: 1,");
-		out.print("data: [");
-		
-		for (BooksResults results : returningResult) {
-			out.print(results.getValue() + ",");
-		}
-
-		out.print("]");
-		out.print("}]");
-		
-		out.print("};");
-		
-		out.print("window.onload = function() {");
-		out.print("var ctx = document.getElementById(\"canvas\").getContext(\"2d\");");
-		out.print("window.myBar = new Chart(ctx, {");
-		out.print("type: 'bar',");
-		out.print("data: barChartData,");
-		out.print("options: {");
-		out.print("responsive: true,");
-		out.print("legend: {");
-		out.print("position: 'top',");
-		out.print("},");
-		out.print("title: {");
-		out.print("display: true,");
-		out.print("text: 'Compare'");
-		out.print("}");
-		out.print("}");
-		out.print("});");
-		
-		out.print("};");
-		out.print("</script>");
-		// ************************* End Chart *****************************
-
+	  
+	  
+	  
+	  
+	
 		
 
 		

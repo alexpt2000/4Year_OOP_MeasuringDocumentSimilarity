@@ -1,7 +1,9 @@
 package ie.gmit.sw;
 
-public class BooksResults {
-	private double value;
+import java.util.Comparator;
+
+public class BooksResults implements Comparator<BooksResults>{
+	private int value;
 	private String bookName;
 	
 	
@@ -10,7 +12,7 @@ public class BooksResults {
 	}
 
 
-	public BooksResults(double value, String bookName) {
+	public BooksResults(int value, String bookName) {
 		super();
 		this.value = value;
 		this.bookName = bookName;
@@ -22,7 +24,7 @@ public class BooksResults {
 	}
 
 
-	public void setValue(double value) {
+	public void setValue(int value) {
 		this.value = value;
 	}
 
@@ -35,6 +37,24 @@ public class BooksResults {
 	public void setBookName(String bookName) {
 		this.bookName = bookName;
 	}
+
+
+	@Override
+	public int compare(BooksResults arg0, BooksResults arg1) {
+        if(arg0.getValue() < arg1.getValue()){
+            return 1;
+        } else {
+            return -1;
+        }
+	}
 	
+	
+
+
+
+
+
+
+
 	
 }

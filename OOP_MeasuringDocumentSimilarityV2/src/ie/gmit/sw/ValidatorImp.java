@@ -2,6 +2,7 @@ package ie.gmit.sw;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.List;
 
 // Bean Validator
@@ -9,17 +10,17 @@ public class ValidatorImp extends UnicastRemoteObject implements Validator {
 
 	private static final long serialVersionUID = 1L;
 	private boolean processed;
-	private List<BooksResults> result;
+	private ArrayList<BooksResults> result;
 
 	ValidatorImp() throws RemoteException {
 		super();
 	}
 
-	public List<BooksResults> getResult() throws RemoteException {
+	public ArrayList<BooksResults> getResult() throws RemoteException {
 		return result;
 	}
 
-	public void setResult(List<BooksResults> result) throws RemoteException {
+	public void setResult(ArrayList<BooksResults> result) throws RemoteException {
 		this.result = result;
 	}
 

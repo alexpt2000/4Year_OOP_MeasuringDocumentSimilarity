@@ -18,9 +18,9 @@ public class BookServiceImpl extends UnicastRemoteObject implements BookService 
 	
 
 	public Validator campareBooks(Books book) throws RemoteException {
-		List<BooksResults> sendResultToPage = new ArrayList<BooksResults>();
+		ArrayList<BooksResults> sendResultToPage = new ArrayList<BooksResults>();
 		boolean existBook = false;
-		double resultSililary = 0;
+		int resultSililary = 0;
 		
 		 CompareBook compare = new CompareBook();
 		 BooksDB saveBook = new BooksDB();

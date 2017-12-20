@@ -13,7 +13,7 @@ public class CompareBook implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 
-	public double similarityHashMap(Books book1, Books bookDB) {
+	public int similarityHashMap(Books book1, Books bookDB) {
 		int similarity = 0;
 
 		int similaritySize = 0;
@@ -68,7 +68,7 @@ public class CompareBook implements Serializable{
 
 		}
 
-		double totalSimilarity = similarity / (similaritySize / CountsimilaritySize);
+		int totalSimilarity = similarity / (similaritySize / CountsimilaritySize);
 
 		if (totalSimilarity > 100) {
 			totalSimilarity = 100;
