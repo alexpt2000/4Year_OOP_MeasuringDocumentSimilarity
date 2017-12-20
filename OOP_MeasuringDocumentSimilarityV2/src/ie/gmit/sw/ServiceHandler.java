@@ -233,7 +233,7 @@ public class ServiceHandler extends HttpServlet {
 		out.print("<div class=\"row\">");
 		out.print("<div class=\"col-md-12\">");
 		out.print(
-				"<p class=\"\">Document similarity (or distance between documents) is a one of the central themes in Information Retrieval. How humans usually define how similar are documents? Usually documents treated as similar if they are semantically close and describe similar concepts. On other hand “similarity” can be used in context of duplicate detection. We will review several common approaches..</p>");
+				"<p class=\"\">The Jaccard index, also known as Intersection over Union and the Jaccard similarity coefficient, is a statistic used for comparing the similarity and diversity of sample sets. The Jaccard coefficient measures similarity between finite sample sets, and is defined as the size of the intersection divided by the size of the union.</p>");
 		out.print("</div>");
 		out.print("</div>");
 		out.print("<div class=\"row\">");
@@ -387,6 +387,8 @@ public class ServiceHandler extends HttpServlet {
 			out.print("</div>");
 			out.print("</div>");
 			out.print("</div>");
+			
+			firstRefreshPage = true;
 		}
 
 		out.print("<div class=\"py-5 bg-dark text-white\">");
