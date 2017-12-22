@@ -121,7 +121,7 @@ public class CompareDB {
 			}
 		});
 
-		Documents book = new Documents(bookName, "T0", docsAsShingleSets);
+		Documents book = new Documents(bookName, docsAsShingleSets);
 
 		return book;
 	}

@@ -24,6 +24,8 @@ public class ServiceQueue implements Runnable {
 	
 	/** The exit. */
 	private volatile boolean exit = false;
+	
+	private String taskNumber;
 
 	/**
 	 * Instantiates a new service queue.
@@ -39,10 +41,11 @@ public class ServiceQueue implements Runnable {
 	 * @param outQueue the out queue
 	 * @param strSer the str ser
 	 */
-	public ServiceQueue(BlockingQueue<Documents> inQueue, Map<String, Validator> outQueue, DocumentService strSer) {
+	public ServiceQueue(BlockingQueue<Documents> inQueue, Map<String, Validator> outQueue, DocumentService strSer, String taskNumber) {
 		this.inQueue = inQueue;
 		this.outQueue = outQueue;
 		this.strSer = strSer;
+		this.taskNumber = taskNumber;
 	}
 
 	/* (non-Javadoc)
@@ -56,7 +59,7 @@ public class ServiceQueue implements Runnable {
 			try {
 				Thread.sleep(1000);
 				res = strSer.campareDocument(req);
-				outQueue.put(req.getTaskNumber(), res);
+				outQueue.put(taskNumber, res);
 			} catch (RemoteException | InterruptedException e) {
 				e.printStackTrace();
 			}

@@ -137,13 +137,13 @@ public class ServiceHandler extends HttpServlet {
 
 			checkProcessed = false;
 
-			Documents requestDocumentResult = new Documents(documentTitle, taskNumber, docsAsShingleSets);
+			Documents requestDocumentResult = new Documents(documentTitle, docsAsShingleSets);
 
 			// Add job to in-queue
 			inQueue.add(requestDocumentResult);
 
 			// Start the Thread
-			work = new ServiceQueue(inQueue, outQueue, service);
+			work = new ServiceQueue(inQueue, outQueue, service, taskNumber);
 			executor.execute(work);
 
 			jobNumber++;

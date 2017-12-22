@@ -6,13 +6,17 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO: Auto-generated Javadoc
+//TODO
+
 /**
  * The Class BookServiceImpl.
+ * 
+ * @author Alexander Souza
+ * @version 1.0
+ * @since Dez 2017
  */
 public class DocumentServiceImpl extends UnicastRemoteObject implements DocumentService {
 	
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
 	/**

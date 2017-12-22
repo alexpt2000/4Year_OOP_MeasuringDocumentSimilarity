@@ -25,16 +25,21 @@ import com.sun.istack.internal.NotNull;
 import xtea_db4o.XTEA;
 import xtea_db4o.XTeaEncryptionStorage;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * The Class BooksDB.
+ * 
+ * All the necessary settings for DB4O to work in the system.
+ * 
+ * 
+ * @author Alexander Souza
+ * @version 1.0
+ * @since Dez 2017
  */
 public class DocumentsDB {
 	
-	/** The db. */
 	private ObjectContainer db = null;
 	
-	/** The container DB. */
 	private ObjectContainer containerDB = null;
 
 	/**
@@ -55,8 +60,8 @@ public class DocumentsDB {
 		// Open a local database. Use Db4o.openServer(config, server, port) for full
 		// client / server
 		try {
-			//db = Db4oEmbedded.openFile(config, "C:/books/books.data");
-			db = Db4oEmbedded.openFile(config, "C:/books/books.data");
+			//db = Db4oEmbedded.openFile(config, "C:/books/Documents.data");
+			db = Db4oEmbedded.openFile(config, "webapps/jaccard/DB/Documents.data"); // Local storage
 		} catch (Db4oIOException e) {
 		} catch (DatabaseFileLockedException e) {
 		} catch (IncompatibleFileFormatException e) {
@@ -68,14 +73,14 @@ public class DocumentsDB {
 
 	/**
 	 * Adds the document to database.
-	 *
-	 * @param document the book
-	 */
-	/*
+	 * 
 	 * Once we get a handle on an ObjectContainer, we are working in a transactional
 	 * environment. Adding objects to our database merely requires calling
 	 * db.set(object).
+	 *
+	 * @param document the Document load from the file
 	 */
+
 	public void AddDocumentToDatabase(Documents document) {
 		containerDB = db.ext().openSession();
 		try {
@@ -88,9 +93,9 @@ public class DocumentsDB {
 	}
 
 	/**
-	 * Load all books.
+	 * Load all Documents into Database.
 	 *
-	 * @return the list
+	 * @return the list of documents
 	 */
 	public List<Documents> LoadAllDocuments() {
 		// An ObjectSet is a specialised List for storing results
