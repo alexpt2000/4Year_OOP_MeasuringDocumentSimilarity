@@ -11,7 +11,7 @@ import java.util.concurrent.BlockingQueue;
 public class ServiceQueue implements Runnable {
 
 	/** The in queue. */
-	private BlockingQueue<Documents> inQueue;
+	private BlockingQueue<Books> inQueue;
 	
 	/** The out queue. */
 	private Map<String, Validator> outQueue;
@@ -20,7 +20,7 @@ public class ServiceQueue implements Runnable {
 	private Validator res;
 	
 	/** The str ser. */
-	private DocumentService strSer;
+	private BookService strSer;
 	
 	/** The exit. */
 	private volatile boolean exit = false;
@@ -39,7 +39,7 @@ public class ServiceQueue implements Runnable {
 	 * @param outQueue the out queue
 	 * @param strSer the str ser
 	 */
-	public ServiceQueue(BlockingQueue<Documents> inQueue, Map<String, Validator> outQueue, DocumentService strSer) {
+	public ServiceQueue(BlockingQueue<Books> inQueue, Map<String, Validator> outQueue, BookService strSer) {
 		this.inQueue = inQueue;
 		this.outQueue = outQueue;
 		this.strSer = strSer;
@@ -52,10 +52,10 @@ public class ServiceQueue implements Runnable {
 	@Override
 	public void run() {
 		while (!exit) {
-			Documents req = inQueue.poll();
+			Books req = inQueue.poll();
 			try {
 				Thread.sleep(1000);
-				res = strSer.campareDocument(req);
+				res = strSer.campareBooks(req);
 				outQueue.put(req.getTaskNumber(), res);
 			} catch (RemoteException | InterruptedException e) {
 				e.printStackTrace();

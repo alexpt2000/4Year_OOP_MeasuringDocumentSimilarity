@@ -6,9 +6,9 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Stream;
 
-import ie.gmit.sw.Books;
-import ie.gmit.sw.BooksDB;
-import ie.gmit.sw.CompareBook;
+import ie.gmit.sw.Documents;
+import ie.gmit.sw.DocumentsDB;
+import ie.gmit.sw.CompareDocuments;
 
 public class RunnerDB2 {
 
@@ -16,12 +16,12 @@ public class RunnerDB2 {
 
 		// Ref https://dzone.com/articles/db4o-java
 
-		boolean existBook = false;
+		boolean existDocument = false;
 
-		BooksDB saveBook = new BooksDB();
+		DocumentsDB saveDocument = new DocumentsDB();
 		CompareDB compare = new CompareDB();
 
-		List<Books> loadDocumentsDB = saveBook.loadAllBooks();
+		List<Documents> loadDocumentsDB = saveDocument.LoadAllDocuments();
 
 		final String docName = "War And Peace Leo Tolstoy";
 		// final String docName = "War And Peace Leo Tolstoy - Modify";
@@ -33,29 +33,29 @@ public class RunnerDB2 {
 
 		Stream<String> dataFileStreamDOC = Files.lines(Paths.get(datafileDOC));
 
-		Books documentHashedShinglesDOC = compare.computeShingles(docName, dataFileStreamDOC);
+		Documents documentHashedShinglesDOC = compare.computeShingles(docName, dataFileStreamDOC);
 
 		System.out.println(docName);
 		System.out.println("==============================================");
 
 		// saveBook.loadAllBooksCompare(documentHashedShinglesDOC);
 
-		for (Books books : loadDocumentsDB) {
+		for (Documents documents : loadDocumentsDB) {
 
-			System.out.println(String.format("%.2f", (compare.similarityHashMap(documentHashedShinglesDOC, books)))
-					+ " %" + "\t\t" + books.getBookName());
+			System.out.println(String.format("%.2f", (compare.similarityHashMap(documentHashedShinglesDOC, documents)))
+					+ " %" + "\t\t" + documents.getDocumentName());
 
-			if (docName.equals(books.getBookName())) {
-				existBook = true;
+			if (docName.equals(documents.getDocumentName())) {
+				existDocument = true;
 			}
 
 		}
 
-		if (existBook) {
-			System.out.println("This book exist on database.");
+		if (existDocument) {
+			System.out.println("This document exist on database.");
 		} else {
-			System.out.println("The book " + docName + " will be save on database.");
-			saveBook.addBookssToDatabase(documentHashedShinglesDOC);
+			System.out.println("The document " + docName + " will be save on database.");
+			saveDocument.AddDocumentToDatabase(documentHashedShinglesDOC);
 		}
 
 	}

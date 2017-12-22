@@ -17,12 +17,12 @@ import java.util.stream.Stream;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 
-import ie.gmit.sw.Books;
-import ie.gmit.sw.BooksDB;
+import ie.gmit.sw.Documents;
+import ie.gmit.sw.DocumentsDB;
 
 public class CompareDB {
 
-	public double similarityHashMap(Books book1, Books bookDB) {
+	public double similarityHashMap(Documents document, Documents documentDB) {
 		int similarity = 0;
 
 		int similaritySize = 0;
@@ -30,17 +30,17 @@ public class CompareDB {
 
 		// System.out.println(" Booke name" + book1.getBookName());
 
-		for (Map.Entry<Integer, List<Integer>> me : book1.getBookHash().entrySet()) {
-			int key = me.getKey();
-			List<Integer> valueList = me.getValue();
+		for (Map.Entry<Integer, List<Integer>> doc : document.getDocumentHash().entrySet()) {
+			int key = doc.getKey();
+			List<Integer> valueList = doc.getValue();
 
 			// System.out.println("Key: " + key);
 			// System.out.println(b2.getBookName());
 
-			for (Map.Entry<Integer, List<Integer>> meDB : bookDB.getBookHash().entrySet()) {
-				int keyDB = meDB.getKey();
+			for (Map.Entry<Integer, List<Integer>> docDB : documentDB.getDocumentHash().entrySet()) {
+				int keyDB = docDB.getKey();
 
-				List<Integer> valueListDB = meDB.getValue();
+				List<Integer> valueListDB = docDB.getValue();
 
 				int numHashSize = valueList.size() + valueListDB.size();
 
@@ -99,7 +99,7 @@ public class CompareDB {
 		return rst ^ random;
 	}
 
-	static Books computeShingles(String bookName, Stream<String> dataFileStream) throws IOException {
+	static Documents computeShingles(String bookName, Stream<String> dataFileStream) throws IOException {
 
 		Map<Integer, List<Integer>> docsAsShingleSets = new HashMap<>();
 		Random r = new Random();
@@ -121,7 +121,7 @@ public class CompareDB {
 			}
 		});
 
-		Books book = new Books(bookName, "T0", docsAsShingleSets);
+		Documents book = new Documents(bookName, "T0", docsAsShingleSets);
 
 		return book;
 	}

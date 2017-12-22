@@ -17,7 +17,7 @@ public interface Validator extends Remote {
 	 * @return the result
 	 * @throws RemoteException the remote exception
 	 */
-	public ArrayList<DocumentResults> getResult() throws RemoteException;
+	public ArrayList<BooksResults> getResult() throws RemoteException;
 
 	/**
 	 * Sets the result.
@@ -25,7 +25,7 @@ public interface Validator extends Remote {
 	 * @param result the new result
 	 * @throws RemoteException the remote exception
 	 */
-	public void setResult(ArrayList<DocumentResults> result) throws RemoteException;
+	public void setResult(ArrayList<BooksResults> result) throws RemoteException;
 
 	/**
 	 * Gets the result save.

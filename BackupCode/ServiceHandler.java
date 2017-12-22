@@ -40,15 +40,15 @@ public class ServiceHandler extends HttpServlet {
 	private int timerRefreshPage = 10000;
 
 	private static Map<String, Validator> outQueue;
-	private static BlockingQueue<Documents> inQueue;
+	private static BlockingQueue<Books> inQueue;
 	private static ExecutorService executor;
 	
 	private Map<Integer, List<Integer>> docsAsShingleSets = new HashMap<>();
-	private List<String> initialDocument = new ArrayList<>();
+	private List<String> initialBook = new ArrayList<>();
 
 	private boolean firstRefreshPage = true;
 	private boolean checkProcessed;
-	private ArrayList<DocumentResults> returningResult;
+	private ArrayList<BooksResults> returningResult;
 
 	private Runnable work = new ServiceQueue();
 
@@ -64,7 +64,7 @@ public class ServiceHandler extends HttpServlet {
 		ctx.getInitParameter("SOME_GLOBAL_OR_ENVIRONMENTAL_VARIABLE");
 
 		outQueue = new HashMap<String, Validator>();
-		inQueue = new LinkedBlockingQueue<Documents>();
+		inQueue = new LinkedBlockingQueue<Books>();
 		executor = Executors.newFixedThreadPool(POOL_SIZE);
 	}
 
@@ -80,8 +80,8 @@ public class ServiceHandler extends HttpServlet {
 
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-		DocumentService service = new DocumentServiceImpl();
-		CompareDocuments compareDocument = new CompareDocuments();
+		BookService service = new BookServiceImpl();
+		CompareBook compareBook = new CompareBook();
 		String resultSave = "";
 		int count = 0;
 
@@ -93,7 +93,7 @@ public class ServiceHandler extends HttpServlet {
 
 		// Step 3) Get any submitted form data. These variables are local to this method
 		// and thread safe...
-		String documentTitle = req.getParameter("txtTitle");
+		String bookTitle = req.getParameter("txtTitle");
 		String taskNumber = req.getParameter("frmTaskNumber");
 
 		// Step 4) Process the input and write out the response.
@@ -120,7 +120,7 @@ public class ServiceHandler extends HttpServlet {
 
 			while ((line = br.readLine()) != null) {
 				String[] words = line.split("\\s");
-				initialDocument.add(line);
+				initialBook.add(line);
 
 				for (int i = 0; i < words.length; i++) {
 					words[i] = words[i].toUpperCase();
@@ -131,16 +131,16 @@ public class ServiceHandler extends HttpServlet {
 				if (words.length > 2) {
 					final String[] document = Arrays.copyOfRange(words, 1, words.length);
 					int docId = r.nextInt(200);
-					docsAsShingleSets.put(docId, new ArrayList<>(compareDocument.asHashes(compareDocument.asShingles(document, 3))));
+					docsAsShingleSets.put(docId, new ArrayList<>(compareBook.asHashes(compareBook.asShingles(document, 3))));
 				}
 			}
 
 			checkProcessed = false;
 
-			Documents requestDocumentResult = new Documents(documentTitle, taskNumber, docsAsShingleSets);
+			Books requestBookResult = new Books(bookTitle, taskNumber, docsAsShingleSets);
 
 			// Add job to in-queue
-			inQueue.add(requestDocumentResult);
+			inQueue.add(requestBookResult);
 
 			// Start the Thread
 			work = new ServiceQueue(inQueue, outQueue, service);
@@ -161,11 +161,11 @@ public class ServiceHandler extends HttpServlet {
 					returningResult = outQItem.getResult();
 					resultSave = outQItem.getResultSave();
 
-					Collections.sort(returningResult, new DocumentResults());
+					Collections.sort(returningResult, new BooksResults());
 
-					for (DocumentResults results : returningResult) {
+					for (BooksResults results : returningResult) {
 						System.out
-								.println("Result.: " + results.getValue() + "%   Docuement Name.: " + results.getDocumentName());
+								.println("Result.: " + results.getValue() + "%   Book Name.: " + results.getBookName());
 					}
 				}
 			}
@@ -177,14 +177,14 @@ public class ServiceHandler extends HttpServlet {
 		out.print("<div class=\"row\">");
 		out.print("<div class=\"col-md-12\">");
 		out.print("<h1 class=\"display-3 text-center\">Measuring Document Similarity</h1>");
-		out.print("<h3 class=\"display-5 text-center\">Measuring Document: " + documentTitle + "</h3>");
+		out.print("<h3 class=\"display-5 text-center\">Measuring Document: " + bookTitle + "</h3>");
 		out.print("</div>");
 		out.print("</div>");
 		out.print("</div>");
 		out.print("</div>");
 
 		out.print("<form name=\"frmRequestDetails\">");
-		out.print("<input name=\"txtTitle\" type=\"hidden\" value=\"" + documentTitle + "\">");
+		out.print("<input name=\"txtTitle\" type=\"hidden\" value=\"" + bookTitle + "\">");
 		out.print("<input name=\"frmTaskNumber\" type=\"hidden\" value=\"" + taskNumber + "\">");
 		out.print("</form>");
 		out.print("</body>");
@@ -289,23 +289,23 @@ public class ServiceHandler extends HttpServlet {
 			out.print("labels: [");
 
 			count = 0;
-			for (DocumentResults results : returningResult) {
+			for (BooksResults results : returningResult) {
 				count++;
-				out.print("\"" + results.getDocumentName() + "\",");
+				out.print("\"" + results.getBookName() + "\",");
 				if (count == 10)
 					break;
 			}
 
 			out.print(" ],");
 			out.print("datasets: [{");
-			out.print(" label: '" + documentTitle + "',");
+			out.print(" label: '" + bookTitle + "',");
 			out.print("backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),");
 			out.print(" borderColor: window.chartColors.red,");
 			out.print("borderWidth: 1,");
 			out.print("data: [");
 
 			count = 0;
-			for (DocumentResults results : returningResult) {
+			for (BooksResults results : returningResult) {
 				count++;
 				out.print(results.getValue() + ",");
 				if (count == 10)
@@ -340,18 +340,18 @@ public class ServiceHandler extends HttpServlet {
 			out.print("<div class=\"row\">");
 			out.print("<div class=\"col-md-6\">");
 			out.print("<div class=\"card\">");
-			out.print("<div class=\"card-header\">" + "200 lines of document: " + documentTitle + "</div>");
+			out.print("<div class=\"card-header\">" + "200 lines of document: " + bookTitle + "</div>");
 			out.print("<div class=\"card-body h-75\">");
 
-			String sampleDocument = "";
+			String sampleBook = "";
 			for (int i = 0; i < 200; i++) {
-				sampleDocument += initialDocument.get(i);
+				sampleBook += initialBook.get(i);
 			}
-			initialDocument.clear();
+			initialBook.clear();
 
 			out.print(
 					"<textarea readonly class=\"form-control noresize\" id=\"text\" name=\"text\" rows=\"25\" style=\"min-width: 100%\" style=\"min-height: 100%\">");
-			out.print(sampleDocument);
+			out.print(sampleBook);
 			out.print("</textarea>");
 			out.print("</div>");
 			out.print("</div>");
@@ -368,13 +368,13 @@ public class ServiceHandler extends HttpServlet {
 			out.print("<tbody>");
 
 			count = 0;
-			for (DocumentResults results : returningResult) {
+			for (BooksResults results : returningResult) {
 				count++;
 
 				out.print("<tr>");
 				out.print("<td>" + count + "</td>");
 				out.print("<td>" + results.getValue() + "%" + "</td>");
-				out.print("<td>" + results.getDocumentName() + "</td>");
+				out.print("<td>" + results.getBookName() + "</td>");
 				out.print("</tr>");
 
 				if (count == 20)
