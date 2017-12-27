@@ -24,6 +24,9 @@ import com.google.common.hash.Hashing;
 
 import javax.servlet.annotation.*;
 
+/**
+ * The Class ServiceHandler.
+ */
 /* NB: You will need to add the JAR file $TOMCAT_HOME/lib/servlet-api.jar to your CLASSPATH 
  *     variable in order to compile a servlet from a command line.
  */
@@ -52,6 +55,9 @@ public class ServiceHandler extends HttpServlet {
 
 	private Runnable work = new ServiceQueue();
 
+	/* (non-Javadoc)
+	 * @see javax.servlet.GenericServlet#init()
+	 */
 	/*
 	 * This method is only called once, when the servlet is first started (like a
 	 * constructor). It's the Template Patten in action! Any application-wide
@@ -63,6 +69,7 @@ public class ServiceHandler extends HttpServlet {
 		ServletContext ctx = getServletContext(); // The servlet context is the application itself.
 		ctx.getInitParameter("SOME_GLOBAL_OR_ENVIRONMENTAL_VARIABLE");
 
+		// init Queue
 		outQueue = new HashMap<String, Validator>();
 		inQueue = new LinkedBlockingQueue<Documents>();
 		executor = Executors.newFixedThreadPool(POOL_SIZE);
@@ -78,6 +85,9 @@ public class ServiceHandler extends HttpServlet {
 	 * to forward the method invocation to doPost() or vice-versa.
 	 */
 
+	/* (non-Javadoc)
+	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
 		DocumentService service = new DocumentServiceImpl();
@@ -108,16 +118,18 @@ public class ServiceHandler extends HttpServlet {
 		out.print("</head>");
 		out.print("<body>");
 
-
+		// If new request, will set a new jobNumber
 		if (taskNumber == null) {
 			taskNumber = new String("T" + jobNumber);
 
+			// read file fom the form
 			Part part = req.getPart("txtDocument");
 
 			BufferedReader br = new BufferedReader(new InputStreamReader(part.getInputStream()));
 			String line = null;
 			Random r = new Random();
 
+			// Read each Lime of document
 			while ((line = br.readLine()) != null) {
 				String[] words = line.split("\\s");
 				initialDocument.add(line);
@@ -190,12 +202,14 @@ public class ServiceHandler extends HttpServlet {
 		out.print("</body>");
 		out.print("</html>");
 
+		// refresh just one time
 		if (firstRefreshPage) {
 			out.print("<script>");
 			out.print("var wait=setTimeout(\"document.frmRequestDetails.submit();\"," + timerRefreshPage + ");");
 			out.print("</script>");
 		}
 
+		// Script bootstrap
 		out.print(
 				"<script src=\"https://code.jquery.com/jquery-3.2.1.slim.min.js\" integrity=\"sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN\" crossorigin=\"anonymous\"></script>");
 		out.print(
@@ -219,7 +233,7 @@ public class ServiceHandler extends HttpServlet {
 		out.print("});");
 		out.print("</script>");
 
-		
+		// Green alert on page if the Document exist on database
 		if (!firstRefreshPage) {
 			out.print("<div class=\"alert alert-success alert-dismissable\">");
 			out.print("<a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>");
@@ -288,10 +302,12 @@ public class ServiceHandler extends HttpServlet {
 			out.print("var barChartData = {");
 			out.print("labels: [");
 
+			// Print the document Name on Chart
 			count = 0;
 			for (DocumentResults results : returningResult) {
 				count++;
 				out.print("\"" + results.getDocumentName() + "\",");
+				//Limit 10 document
 				if (count == 10)
 					break;
 			}
@@ -304,10 +320,12 @@ public class ServiceHandler extends HttpServlet {
 			out.print("borderWidth: 1,");
 			out.print("data: [");
 
+			// Print the document Value on Chart
 			count = 0;
 			for (DocumentResults results : returningResult) {
 				count++;
 				out.print(results.getValue() + ",");
+				//Limit 10 document
 				if (count == 10)
 					break;
 			}
@@ -335,6 +353,7 @@ public class ServiceHandler extends HttpServlet {
 			out.print("</script>");
 			// ************************* End Chart *****************************
 
+			// textarea of sample of document
 			out.print("<div class=\"py-5\">");
 			out.print("<div class=\"container\">");
 			out.print("<div class=\"row\">");
@@ -343,19 +362,22 @@ public class ServiceHandler extends HttpServlet {
 			out.print("<div class=\"card-header\">" + "200 lines of document: " + documentTitle + "</div>");
 			out.print("<div class=\"card-body h-75\">");
 
+			// Load sample of document limited by 200 lines
 			String sampleDocument = "";
 			for (int i = 0; i < 200; i++) {
 				sampleDocument += initialDocument.get(i);
 			}
 			initialDocument.clear();
 
-			out.print(
-					"<textarea readonly class=\"form-control noresize\" id=\"text\" name=\"text\" rows=\"25\" style=\"min-width: 100%\" style=\"min-height: 100%\">");
+			out.print("<textarea readonly class=\"form-control noresize\" id=\"text\" name=\"text\" rows=\"25\" style=\"min-width: 100%\" style=\"min-height: 100%\">");
 			out.print(sampleDocument);
 			out.print("</textarea>");
+			
 			out.print("</div>");
 			out.print("</div>");
 			out.print("</div>");
+			
+			// List of Documents results
 			out.print("<div class=\"col-md-6\">");
 			out.print("<table class=\"table\">");
 			out.print("<thead>");
@@ -376,7 +398,7 @@ public class ServiceHandler extends HttpServlet {
 				out.print("<td>" + results.getValue() + "%" + "</td>");
 				out.print("<td>" + results.getDocumentName() + "</td>");
 				out.print("</tr>");
-
+				// Limit by 20 lines of result
 				if (count == 20)
 					break;
 			}
@@ -391,6 +413,7 @@ public class ServiceHandler extends HttpServlet {
 			firstRefreshPage = true;
 		}
 
+		// Status bar
 		out.print("<div class=\"py-5 bg-dark text-white\">");
 		out.print("<div class=\"container\">");
 		out.print("<div class=\"row\">");
@@ -404,6 +427,9 @@ public class ServiceHandler extends HttpServlet {
 		// ************************* End Page Bootstrap *****************************
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		doGet(req, resp);
 	}

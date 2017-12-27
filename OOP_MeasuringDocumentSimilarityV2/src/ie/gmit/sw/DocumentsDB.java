@@ -34,7 +34,7 @@ import xtea_db4o.XTeaEncryptionStorage;
  * 
  * @author Alexander Souza
  * @version 1.0
- * @since Dez 2017
+ * @since Dec 2017
  */
 public class DocumentsDB {
 	
@@ -60,8 +60,10 @@ public class DocumentsDB {
 		// Open a local database. Use Db4o.openServer(config, server, port) for full
 		// client / server
 		try {
-			db = Db4oEmbedded.openFile(config, "C:/books/Documents.data");
-			//db = Db4oEmbedded.openFile(config, "webapps/jaccard/DB/Documents.data"); // Local storage
+			//db = Db4oEmbedded.openFile(config, "C:/books/Documents.data"); // Hard code of local storage
+			//db = Db4oEmbedded.openFile(config, "Documents.data"); // Hard code of local storage
+			db = Db4oEmbedded.openFile(config, "webapps/jaccard/DB/Documents.data"); 	// Local storage into DB folder on 
+																						//Tomcat folder
 		} catch (Db4oIOException e) {
 		} catch (DatabaseFileLockedException e) {
 		} catch (IncompatibleFileFormatException e) {

@@ -18,7 +18,7 @@ public class DocumentResults implements Comparator<DocumentResults> {
 	}
 
 	/**
-	 * Instantiates a new document results, takes similarity and documment name.
+	 * Instantiates a new document results, takes similarity and document name.
 	 *
 	 * @param value the value of similarity
 	 * @param documentName the document name

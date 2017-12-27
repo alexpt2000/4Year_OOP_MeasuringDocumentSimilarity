@@ -55,11 +55,11 @@ public class ServiceQueue implements Runnable {
 	@Override
 	public void run() {
 		while (!exit) {
-			Documents req = inQueue.poll();
+			Documents req = inQueue.poll(); // get value from inQueue
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(1000); // sleep per 10 sec.
 				res = strSer.campareDocument(req);
-				outQueue.put(taskNumber, res);
+				outQueue.put(taskNumber, res); // send to outQueue
 			} catch (RemoteException | InterruptedException e) {
 				e.printStackTrace();
 			}

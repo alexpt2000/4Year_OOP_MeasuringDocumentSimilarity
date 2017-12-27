@@ -10,7 +10,7 @@ import java.rmi.RemoteException;
 public interface DocumentService extends Remote {
 	
 	/**
-	 * Campare Documents.
+	 * Compare Documents.
 	 *
 	 * @param document the Documents
 	 * @return the validator

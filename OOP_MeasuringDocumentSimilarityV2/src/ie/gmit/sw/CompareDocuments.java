@@ -100,7 +100,7 @@ public class CompareDocuments implements Serializable {
 	}
 
 	/**
-	 * Gets the hash.
+	 * Gets the hash values.
 	 *
 	 * @param In the value
 	 * @param In the random
@@ -117,7 +117,7 @@ public class CompareDocuments implements Serializable {
 	}
 
 	/**
-	 * As shingles.
+	 * Convert each Array String line As shingles.
 	 *
 	 * @param String[] the document
 	 * @param Int the length
