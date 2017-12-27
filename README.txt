@@ -1,64 +1,74 @@
-﻿4Year Distributed Systems  
-Asynchronous RMI Dictionary Service
+﻿4Year Advanced Object-Oriented Design Principles & Patterns
+A JEE Application for Measuring Document Similarity
 ----------------------------------------------------------------------------------------
 
 GitHub
 ------
-https://github.com/alexpt2000gmit/4Year_DistributedSystems_AsynchronousRMIDictionaryService
+https://github.com/alexpt2000gmit/4Year_OOP_MeasuringDocumentSimilarity
 
 
 Application deployed on Amazon
 ------------------------------
-http://54.210.4.37:8080/job-server/
+http://54.210.4.37:8080/jaccard/
 
 
 Overview
 --------
-A JSP page should provide users with the ability to specify a string which will be checked 
-against the dictionary. The HTML form information should be dispatched to a servlet that adds 
-the client request to an in-queue and then returns a job ID to the web client. The web client 
-should poll the web server periodically (every 10 seconds) and query if the request has been 
-processed. Client requests in the inQueue should be periodically removed and processed 
-(every 10 seconds).
+You are required to develop a Java web application that enables two or more text documents to
+be compared for similarity.
 
+Jaccard Similarity
+-------------------
+A commonly employed technique for measuring the degree of similarity between two
+documents is to represent the documents as sets of letters, words or sub sentences. If we
+decompose a document into its set of constituent words, we can measure the similarity between
+them using the Jaccard Index. Developed by the Swiss botanist Paul Jaccard in 1901, the
+Jaccard Similarity of two sets.
 
+Db4o
+-----
+db4o (database for objects) was an embeddable open source object database for Java and .NET developers. 
+It was developed, commercially licensed and supported by Actian. In October 2014, Actian declined to 
+continue to actively pursue and promote the commercial db4o product offering for new customers.
+- Ref. https://en.wikipedia.org/wiki/Db4o
 
 
 INSTRUCTIONS FOR USE 
 --------------------
 1 - DOWNLOAD THE FOLLOWING FILES:
-    - dictionary-service.jar
-    - job-server.war
-    - WebstersUnabridgedDictionary.txt
-
-2 - STARTING THE SERVER: 
-    $ java -cp dictionary-service.jar ie.gmit.sw.ServiceSetup
-
-3 - STARTING THE TOMCAT 
-
-    After install the Tomcat 8.5, copy the file "job-server.war" into the folder 
-    "C:\Program Files\Apache Software Foundation\Tomcat 8.5\webapps" , and start the Tomcat.
-
-4 - OPEN THE BROWSER
-
-    http://localhost:8080/job-server/
+ 	- jaccard.war
+ 	- SampleBooks.zip   (optional)
 
 
+2 - STARTING THE TOMCAT 
+
+	After install the Tomcat, copy the file "jaccard.war" into the folder 
+		- Windows
+		"C:\Program Files\Apache Software Foundation\Tomcat9\webapps" 
+
+		- Mac
+		/usr/local/User/tomcat/9/libexec/webapps
+
+		- Linux
+		/var/lib/tomcat9/webapps/
+
+	Now start the Tomcat.
 
 
-HOW TO CREATE AN EXECUTABLE "JAR" AND "WAR" FILES 
--------------------------------------------------
+3 - OPEN THE BROWSER
 
-CEATING "JAR" FILE:
-    Inside "SRC folder" - you can create the "Class" file using the following command from :
+	http://localhost:8080/jaccard/
 
-    $ javac -cp servlet-api.jar ie/gmit/sw/*.java
-    $ jar -cf dictionary-service.jar ie/gmit/sw/*.class
 
+
+HOW TO CREATE AN EXECUTABLE "WAR" FILE
+--------------------------------------
 
 CEATING "WAR" FILE:
+
 Into de folder "WebContent":
-    $ jar –cf job-server.war *
+
+	jar –cf jaccard.war *
 
 
 
@@ -71,5 +81,4 @@ Author
         - https://github.com/alexpt2000gmit
         - https://github.com/alexpt2000
         - www.linkedin.com/in/alexander-souza-3a841539/
-
 
