@@ -13,7 +13,7 @@ import java.util.List;
  * 
  * @author Alexander Souza
  * @version 1.0
- * @since Dez 2017
+ * @since Dec 2017
  */
 public class DocumentServiceImpl extends UnicastRemoteObject implements DocumentService {
 	

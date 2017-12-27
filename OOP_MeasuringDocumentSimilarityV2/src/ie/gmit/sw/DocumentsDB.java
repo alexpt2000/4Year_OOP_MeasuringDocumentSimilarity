@@ -60,8 +60,8 @@ public class DocumentsDB {
 		// Open a local database. Use Db4o.openServer(config, server, port) for full
 		// client / server
 		try {
-			//db = Db4oEmbedded.openFile(config, "C:/books/Documents.data");
-			db = Db4oEmbedded.openFile(config, "webapps/jaccard/DB/Documents.data"); // Local storage
+			db = Db4oEmbedded.openFile(config, "C:/books/Documents.data");
+			//db = Db4oEmbedded.openFile(config, "webapps/jaccard/DB/Documents.data"); // Local storage
 		} catch (Db4oIOException e) {
 		} catch (DatabaseFileLockedException e) {
 		} catch (IncompatibleFileFormatException e) {
