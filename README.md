@@ -33,9 +33,11 @@ db4o (database for objects) was an embeddable open source object database for Ja
 
 ![Screencast](Screencast/Files.png)
 
-### 2 - STARTING THE TOMCAT 
+### 2 - TOMCAT 
 
-After install the Tomcat, copy the file "jaccard.war" into the folder 
+After install the Tomcat, copy the file "jaccard.war" into the folder.
+
+In this case I am using version 9, I tested in version 8 and it also works perfectly.
 #### Windows
 ```
 "C:\Program Files\Apache Software Foundation\Tomcat9\webapps" 
@@ -51,7 +53,7 @@ After install the Tomcat, copy the file "jaccard.war" into the folder
 /var/lib/tomcat9/webapps/
 ```
 
-Now start the Tomcat.
+In the image below follows a demonstration of how to do deploy in windows and also how to start Tomcat.
 
 ![Screencast](Screencast/Tomcat.gif)
 
@@ -60,6 +62,17 @@ Now start the Tomcat.
 ```
 http://localhost:8080/jaccard/
 ```
+
+## Examples of books
+In the repository find some books that can be used as tests to find the percentage of similarities.
+
+Please download the "SampleBooks.zip" file.
+
+ ![Screencast](Screencast/SampleBooks.png)
+
+## UML Diagram
+
+![Screencast](design.png)
 
 ## HOW TO CREATE AN EXECUTABLE "WAR" FILE
 
